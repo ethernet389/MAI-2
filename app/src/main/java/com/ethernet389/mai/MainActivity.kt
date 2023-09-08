@@ -3,15 +3,26 @@ package com.ethernet389.mai
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.EaseInOutSine
+import androidx.compose.animation.core.EaseOutSine
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -26,6 +37,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -60,13 +72,19 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun MaiApp(
     viewModel: MaiViewModel = koinViewModel(),
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntry?.destination
+    val screenArray = MaiScreen.values()
+    val currentScreen = screenArray.find {
+        it.name == currentDestination?.route
+    }
+
     val scrollBehavior = TopAppBarDefaults
         .enterAlwaysScrollBehavior(rememberTopAppBarState())
 
@@ -82,20 +100,29 @@ fun MaiApp(
             )
         },
         bottomBar = {
-            val screenArray = MaiScreen.values()
             NavigationBottomBar(
                 appScreens = screenArray,
-                currentScreen = screenArray.find {
-                    it.name == backStackEntry?.destination?.route
-                } ?: MaiScreen.Templates,
+                currentScreen = currentScreen ?: MaiScreen.Templates,
                 onRouteClick = { newScreen ->
                     navController.navigate(route = newScreen.name)
                 }
             )
         },
         floatingActionButton = {
-            AppFloatingActionButton {
-
+            AnimatedVisibility(
+                visible = currentScreen?.fabIcon != null,
+                enter = scaleIn(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ),
+                exit = scaleOut()
+            ) {
+                AppFloatingActionButton(
+                    icon = currentScreen?.fabIcon ?: Icons.Filled.NotificationsNone,
+                    onClick = {},
+                )
             }
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -176,20 +203,37 @@ fun NavigationBottomBar(
 @Composable
 fun AppFloatingActionButton(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    icon: ImageVector?
 ) {
     FloatingActionButton(
         onClick = onClick,
         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
         contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 3.dp),
         modifier = modifier
             .padding(3.dp)
             .size(64.dp)
     ) {
-        Icon(
-            imageVector = Icons.Filled.Add,
-            contentDescription = null,
-            modifier = Modifier.size(32.dp)
-        )
+        if (icon != null)
+            AnimatedContent(
+                targetState = icon,
+                label = "animate icon",
+                transitionSpec = {
+                    scaleIn(
+                        animationSpec = tween(durationMillis = 300, easing = EaseInOutSine)
+                    ).togetherWith(
+                        scaleOut(
+                            animationSpec = tween(durationMillis = 300, easing = EaseOutSine)
+                        )
+                    )
+                }
+            ) { newIcon ->
+                Icon(
+                    imageVector = newIcon,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp)
+                )
+            }
     }
 }
