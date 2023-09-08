@@ -5,8 +5,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -23,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -82,10 +88,15 @@ fun MaiApp(
                 currentScreen = screenArray.find {
                     it.name == backStackEntry?.destination?.route
                 } ?: MaiScreen.Templates,
-                navigateToRoute = { newScreen ->
+                onRouteClick = { newScreen ->
                     navController.navigate(route = newScreen.name)
                 }
             )
+        },
+        floatingActionButton = {
+            AppFloatingActionButton {
+
+            }
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
@@ -107,7 +118,7 @@ fun MaiApp(
             }
             composable(
                 route = "${MaiScreen.Templates.name}/{template_id}",
-                arguments = listOf(navArgument("template_id") { type = NavType.IntType})
+                arguments = listOf(navArgument("template_id") { type = NavType.IntType })
             ) { backStackEntry ->
                 val txt = backStackEntry.arguments?.getInt("template_id")
                 Text("I'm template with id: $txt")
@@ -141,7 +152,7 @@ fun NavigationBottomBar(
     modifier: Modifier = Modifier,
     appScreens: Array<MaiScreen>,
     currentScreen: MaiScreen,
-    navigateToRoute: (MaiScreen) -> Unit
+    onRouteClick: (MaiScreen) -> Unit
 ) {
     NavigationBar(
         modifier = modifier
@@ -149,7 +160,7 @@ fun NavigationBottomBar(
         appScreens.forEach { item ->
             NavigationBarItem(
                 selected = currentScreen == item,
-                onClick = { navigateToRoute(item) },
+                onClick = { onRouteClick(item) },
                 icon = {
                     Icon(
                         imageVector = item.navigationIcon,
@@ -159,5 +170,26 @@ fun NavigationBottomBar(
                 label = { Text(stringResource(item.navigationTitle)) }
             )
         }
+    }
+}
+
+@Composable
+fun AppFloatingActionButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    FloatingActionButton(
+        onClick = onClick,
+        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+        modifier = modifier
+            .padding(3.dp)
+            .size(64.dp)
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Add,
+            contentDescription = null,
+            modifier = Modifier.size(32.dp)
+        )
     }
 }

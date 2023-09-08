@@ -51,7 +51,6 @@ android {
 }
 
 dependencies {
-
     //modules
     implementation(project(":data"))
     implementation(project(":domain"))

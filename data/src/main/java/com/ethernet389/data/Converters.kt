@@ -1,8 +1,6 @@
 package com.ethernet389.data
 
 import androidx.room.TypeConverter
-import com.ethernet389.data.model.DataNote
-import com.ethernet389.data.model.DataTemplate
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 

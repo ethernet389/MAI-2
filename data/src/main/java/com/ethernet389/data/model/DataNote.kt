@@ -6,9 +6,9 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.ethernet389.domain.model.note.BaseNote
+import com.ethernet389.domain.model.note.Note
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import com.ethernet389.domain.model.note.Note
 
 
 @Serializable

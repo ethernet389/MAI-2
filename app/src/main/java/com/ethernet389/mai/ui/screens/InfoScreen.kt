@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
@@ -15,13 +16,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ethernet389.mai.R
+import com.ethernet389.mai.util.annotatedStringResource
+import com.ethernet389.mai.util.spannableStringToAnnotatedString
 
 @Composable
 fun InfoScreen(modifier: Modifier = Modifier) {
@@ -29,24 +32,15 @@ fun InfoScreen(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        item { InfoCard(text = stringResource(R.string.how_to_use), isTitle = true) }
-        item { InfoCard(text = stringResource(R.string.instruction)) }
-        item { InfoCard(text = stringResource(R.string.how_to_create), isTitle = true) }
-        item { InfoCard(text = stringResource(R.string.how_to_fill)) }
-        item { InfoCard(text = stringResource(R.string.literature), isTitle = true) }
+        item { InfoCard(text = annotatedStringResource(R.string.how_to_use), isTitle = true) }
+        item { InfoCard(text = annotatedStringResource(R.string.instruction)) }
+        item { InfoCard(text = annotatedStringResource(R.string.how_to_create), isTitle = true) }
+        item { InfoCard(text = annotatedStringResource(R.string.how_to_fill)) }
+        item { InfoCard(text = annotatedStringResource(R.string.literature), isTitle = true) }
         item {
-            val titles = stringArrayResource(R.array.literature_names)
-            val links = stringArrayResource(R.array.hyperlink_literature)
-            for (i in titles.indices)
-                InfoCard(text = titles[i], hyperlink = links[i])
-        }
-        item { InfoCard(text = stringResource(R.string.how_to_use), isTitle = true) }
-        item { InfoCard(text = stringResource(R.string.instruction)) }
-        item { InfoCard(text = stringResource(R.string.how_to_create), isTitle = true) }
-        item { InfoCard(text = stringResource(R.string.how_to_fill)) }
-        item { InfoCard(text = stringResource(R.string.literature), isTitle = true) }
-        item {
-            val titles = stringArrayResource(R.array.literature_names)
+            val titles = stringArrayResource(R.array.literature_names).map {
+                spannableStringToAnnotatedString(text = it, density = LocalDensity.current)
+            }
             val links = stringArrayResource(R.array.hyperlink_literature)
             for (i in titles.indices)
                 InfoCard(text = titles[i], hyperlink = links[i])
@@ -56,7 +50,7 @@ fun InfoScreen(modifier: Modifier = Modifier) {
 
 @Composable
 fun InfoCard(
-    text: String,
+    text: AnnotatedString,
     isTitle: Boolean = false,
     hyperlink: String? = null,
     colors: CardColors = CardDefaults.cardColors(),
@@ -64,19 +58,22 @@ fun InfoCard(
 ) {
     val context = LocalContext.current
     Card(
-        modifier = modifier.padding(15.dp),
+        modifier = modifier
+            .padding(5.dp)
+            .fillMaxWidth(),
         elevation = CardDefaults
             .cardElevation(defaultElevation = dimensionResource(R.dimen.card_elevation)),
         shape = MaterialTheme.shapes.medium,
         colors = colors
     ) {
         Box(
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.padding(20.dp)
         ) {
             Text(
                 text = text,
                 style = with(MaterialTheme.typography) {
-                    if (isTitle) titleLarge else bodyMedium
+                    if (isTitle) titleLarge else bodyLarge
                 },
                 fontWeight = if (isTitle) FontWeight.Bold else null,
                 modifier = Modifier.clickable(enabled = hyperlink != null) {
@@ -88,16 +85,4 @@ fun InfoCard(
             )
         }
     }
-}
-
-@Preview
-@Composable
-fun InfoCardPreviewTitle() {
-    InfoCard(text = "title", isTitle = true)
-}
-
-@Preview
-@Composable
-fun InfoCardPreviewNoTitle() {
-    InfoCard(text = "body text", isTitle = false)
 }
