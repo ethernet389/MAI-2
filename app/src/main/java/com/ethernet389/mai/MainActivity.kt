@@ -11,6 +11,8 @@ import androidx.compose.animation.core.EaseOutSine
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
@@ -18,7 +20,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.NotificationsNone
+import androidx.compose.material.icons.outlined.AddBox
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -120,7 +122,7 @@ fun MaiApp(
                 exit = scaleOut()
             ) {
                 AppFloatingActionButton(
-                    icon = currentScreen?.fabIcon ?: Icons.Filled.NotificationsNone,
+                    icon = currentScreen?.fabIcon,
                     onClick = {},
                 )
             }
@@ -215,7 +217,11 @@ fun AppFloatingActionButton(
             .padding(3.dp)
             .size(64.dp)
     ) {
-        if (icon != null)
+        AnimatedVisibility(
+            visible = icon != null,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             AnimatedContent(
                 targetState = icon,
                 label = "animate icon",
@@ -230,10 +236,11 @@ fun AppFloatingActionButton(
                 }
             ) { newIcon ->
                 Icon(
-                    imageVector = newIcon,
+                    imageVector = newIcon ?: Icons.Outlined.AddBox,
                     contentDescription = null,
                     modifier = Modifier.size(32.dp)
                 )
             }
+        }
     }
 }
