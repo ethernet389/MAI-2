@@ -17,13 +17,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -32,8 +30,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.ethernet389.mai.ui.router.MaiScreen
+import com.ethernet389.mai.ui.screens.InfoScreen
 import com.ethernet389.mai.ui.theme.MAITheme
-import com.ethernet389.mai.ui.theme.MaiScreen
 import com.ethernet389.mai.view_model.MaiViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -62,15 +61,18 @@ fun MaiApp(
     navController: NavHostController = rememberNavController()
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
+    val scrollBehavior = TopAppBarDefaults
+        .enterAlwaysScrollBehavior(rememberTopAppBarState())
+
     Scaffold(
         topBar = {
             TitleAppBar(
-                scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(),
+                scrollBehavior = scrollBehavior,
                 colors = TopAppBarDefaults
                     .centerAlignedTopAppBarColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         titleContentColor = MaterialTheme.colorScheme.onPrimary
-                    )
+                    ),
             )
         },
         bottomBar = {
@@ -84,7 +86,8 @@ fun MaiApp(
                     navController.navigate(route = newScreen.name)
                 }
             )
-        }
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
         NavHost(
             navController = navController,
@@ -94,7 +97,7 @@ fun MaiApp(
             composable(route = MaiScreen.Notes.name) { Text(text = "I'm notes!") }
             composable(route = MaiScreen.Templates.name) { Text(text = "I'm templates!") }
             composable(route = MaiScreen.Settings.name) { Text(text = "I'm settings!") }
-            composable(route = MaiScreen.Information.name) { Text(text = "I'm info!") }
+            composable(route = MaiScreen.Information.name) { InfoScreen() }
             composable(
                 route = "${MaiScreen.Notes.name}/{note_id}",
                 arguments = listOf(navArgument("note_id") { type = NavType.IntType })

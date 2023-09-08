@@ -1,4 +1,4 @@
-package com.ethernet389.mai.ui.theme.components
+package com.ethernet389.mai.ui.components
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items

@@ -106,6 +106,7 @@ fun MAITheme(
     }
 
     MaterialTheme(
+        shapes = shapes,
         colorScheme = colorScheme,
         typography = Typography,
         content = content

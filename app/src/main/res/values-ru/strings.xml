@@ -7,4 +7,48 @@
     <string name="templates">Шаблоны</string>
     <string name="settings">Настройки</string>
     <string name="info">Инфо</string>
+
+    <!-- Info -->
+    <string name="instruction">
+        1. Создать шаблон из численно измеряемых критериев
+        \n2. Заполнить опрос, выбрав шаблон
+        \n3. Просмотреть результат и выбрать кандидата с высшим рейтингом
+        \n\n
+        <b>Примечание 1:</b> Если вы забыли критерии оценивания шаблона, то <b>зажмите</b> кнопку шаблона
+    </string>
+    <string name="how_to_use">Как пользоваться приложением</string>
+    <string name="how_to_create">Как заполнить опрос/шаблон</string>
+    <string name="how_to_fill">
+        Требуется ячейку таблицы (например, строка i и столбец j).
+        Далее выбрать целое численное значение от 1 до 9.
+        \n\n
+        <b>Смысл численных значений:</b>
+        \n1 - строка i <i>одинаково важна</i> столбцу j
+        \n2 - строка i <i>немного важнее</i> столбца j
+        \n5 - строка i <i>значительно важнее</i> столбца j
+        \n9 - строка i <i>максимально важнее</i> столбца j
+        \n\n
+        <b>Примечание 1:</b>
+        Значения по типу 1/2, 1/3, 1/4 и т.д. являются противоположностью к ранее описанным.
+        \n\n
+        <b>Примечание 2:</b>
+        Если вы вдруг забыли, что означает строка или столбец, то <b>нажмите</b> на название
+        (слева или сверху соответственно)
+        \n\n
+        <b>Примечание 3:</b>
+        Cокращение критериев и кандидатов производится по <b>первым трём буквам</b>.
+        Порядок следования соблюдается.
+    </string>
+    <string name="literature">Литература</string>
+    <string-array name="literature_names">
+        <item><u>Таха. Теория игр и принятия решений</u></item>
+        <item><u>Лекция 1. Метод анализа иерархий (метод Т.Л. Саати)</u></item>
+        <item><u>Т.Саати. Принятие решений. Метод анализа иерархий</u></item>
+    </string-array>
+    <string-array name="hyperlink_literature">
+        <item>https://github.com/ethernet389/Solve-on-Java/blob/main/docs/%D0%A2%D0%B0%D1%85%D0%B0.pdf</item>
+        <item>https://github.com/ethernet389/Solve-on-Java/blob/main/docs/lec1_is-2_2020%20(1).pdf</item>
+        <item>https://github.com/ethernet389/Solve-on-Java/blob/main/docs/saaty.pdf</item>
+    </string-array>
+
 </resources>

@@ -6,4 +6,46 @@
     <string name="templates">Templates</string>
     <string name="settings">Settings</string>
     <string name="info">Info</string>
+
+    <!-- Info -->
+    <string name="instruction">
+        1. Create a template from numerically measured criteria
+        \n2. Fill out the survey, chosen a template
+        \n3. View the result and chose candidate with highest rating
+        \n<b>Note 1:</b> If you forgot criteria of template evaluation, <b>hold</b> template button
+    </string>
+    <string name="how_to_use">How to use this app</string>
+    <string name="how_to_create">How to create survey/template</string>
+    <string name="how_to_fill">
+        A table cell is required (For example, string i and column j).
+        Next choose integer value from 1 to 9.
+        \n\n
+        <b>Meaning of numeric values:</b>
+        \n1 - string i <i>is equally important</i> column j
+        \n2 - string i <i> is a little more important than</i> column j
+        \n5 - string i <i> is significantly important than</i> column j
+        \n9 - string i <i> is maximally important than</i> column j
+        \n\n
+        <b>Note 1:</b>
+        Values like 1/2, 1/3, 1/4 etc. are the opposite to the previously described.
+        \n\n
+        <b>Note 2:</b>
+        If you suddenly forgot, what mean string or column, <b>tap</b> on title
+        (left or top respectively)
+        \n\n
+        <b>Note 3:</b>
+        Reduction of criteria and candidates is made by <b>the first three</b>.
+        The sequence is observed.
+    </string>
+    <string name="literature">Literature</string>
+    <string-array name="literature_names">
+        <item><u>Таха. Теория игр и принятия решений</u></item>
+        <item><u>Лекция 1. Метод анализа иерархий (метод Т.Л. Саати)</u></item>
+        <item><u>Т.Саати. Принятие решений. Метод анализа иерархий</u></item>
+    </string-array>
+    <string-array name="hyperlink_literature">
+        <item>https://github.com/ethernet389/Solve-on-Java/blob/main/docs/%D0%A2%D0%B0%D1%85%D0%B0.pdf</item>
+        <item>https://github.com/ethernet389/Solve-on-Java/blob/main/docs/lec1_is-2_2020%20(1).pdf</item>
+        <item>https://github.com/ethernet389/Solve-on-Java/blob/main/docs/saaty.pdf</item>
+    </string-array>
 </resources>
