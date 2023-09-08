@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">МАИ</string>
+
+    <!-- Navigation Labels -->
+    <string name="notes">Записи</string>
+    <string name="templates">Шаблоны</string>
+    <string name="settings">Настройки</string>
+    <string name="info">Инфо</string>
+</resources>

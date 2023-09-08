@@ -6,7 +6,7 @@ import com.ethernet389.domain.repository.NoteRepository
 class NotesLoader(
     private val noteRepository: NoteRepository
 ) {
-    suspend fun loadNotes(): List<Note> {
+    suspend fun getNotes(): List<Note> {
         return noteRepository.getNotes()
     }
 }

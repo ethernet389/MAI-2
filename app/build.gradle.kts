@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.ethernet389.mai"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.ethernet389.mai"
@@ -57,9 +57,11 @@ dependencies {
     implementation(project(":domain"))
 
     //Navigation API
-    val nav_version = "2.6.0"
+    val nav_version = "2.7.2"
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
+    //Extended Material Icons
+    implementation("androidx.compose.material:material-icons-extended:1.5.1")
 
     //Room
     val room_version = "2.5.2"
@@ -73,11 +75,11 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose:$koin_version")
 
     //ViewModel
-    val view_model_version = "2.6.1"
+    val view_model_version = "2.6.2"
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$view_model_version")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$view_model_version")
 
-    implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui")

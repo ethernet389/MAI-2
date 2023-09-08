@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">MAI</string>
 
-    <!-- Labels -->
+    <!-- Navigation Labels -->
     <string name="notes">Notes</string>
-    <string name="templates">Teplmates</string>
+    <string name="templates">Templates</string>
     <string name="settings">Settings</string>
+    <string name="info">Info</string>
 </resources>

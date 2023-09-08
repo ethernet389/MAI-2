@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.ethernet389.data"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 24
