@@ -12,7 +12,7 @@ class RoomTemplateRepository(
     private val templateDao: TemplateDao
 ) : TemplateRepository {
     override suspend fun deleteTemplate(template: Template): Boolean {
-        return templateDao.deleteTemplate(template.toDataTemplate()) != 0L
+        return templateDao.deleteTemplate(template.toDataTemplate()) != 0
     }
 
     override suspend fun createTemplate(template: BaseTemplate): Boolean {

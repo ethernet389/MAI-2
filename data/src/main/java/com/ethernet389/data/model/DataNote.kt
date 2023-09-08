@@ -3,6 +3,7 @@ package com.ethernet389.data.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.ethernet389.domain.model.note.BaseNote
 import kotlinx.serialization.SerialName
@@ -13,6 +14,7 @@ import com.ethernet389.domain.model.note.Note
 @Serializable
 @Entity(
     tableName = "notes",
+    indices = [Index("id")],
     foreignKeys = [ForeignKey(
         entity = DataTemplate::class,
         parentColumns = ["id"],

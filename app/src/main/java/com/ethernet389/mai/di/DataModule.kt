@@ -10,12 +10,13 @@ import com.ethernet389.data.repository.RoomTemplateRepository
 import com.ethernet389.domain.repository.NoteRepository
 import com.ethernet389.domain.repository.TemplateRepository
 import org.koin.android.ext.koin.androidApplication
+import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
 val dataModule = module {
     single {
         Room.databaseBuilder(
-            androidApplication(),
+            get(),
             AppDatabase::class.java,
             APP_DATABASE_NAME
         ).build()

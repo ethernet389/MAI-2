@@ -16,5 +16,5 @@ interface NoteDao {
     fun getAllNotes(): List<DataNote>
 
     @Delete
-    fun deleteNote(note: DataNote): Long
+    fun deleteNote(note: DataNote): Int
 }

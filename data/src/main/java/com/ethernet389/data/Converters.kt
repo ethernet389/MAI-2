@@ -8,22 +8,12 @@ import kotlinx.serialization.json.Json
 
 class Converters {
     @TypeConverter
-    fun fromDataNote(dataNote: DataNote): String {
-        return Json.encodeToString(dataNote)
+    fun stringListToJson(lst: List<String>): String {
+        return Json.encodeToString(lst)
     }
 
     @TypeConverter
-    fun toDataNote(json: String): DataNote {
-        return Json.decodeFromString(json)
-    }
-
-    @TypeConverter
-    fun fromDataTemplate(dataTemplate: DataTemplate): String {
-        return Json.encodeToString(dataTemplate)
-    }
-
-    @TypeConverter
-    fun toDataTemplate(json: String): DataTemplate {
+    fun jsonToListString(json: String): List<String> {
         return Json.decodeFromString(json)
     }
 }

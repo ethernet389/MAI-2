@@ -11,11 +11,14 @@ interface TemplateDao {
     @Insert
     fun insertTemplate(dataTemplate: DataTemplate): Long
 
+    @Insert
+    fun insertTemplates(dataTemplates: List<DataTemplate>): List<Long>
+
     @Query("SELECT * FROM templates")
     fun getAllTemplates(): List<DataTemplate>
 
     @Delete
-    fun deleteTemplate(template: DataTemplate): Long
+    fun deleteTemplate(template: DataTemplate): Int
 
     @Query("SELECT * FROM templates WHERE id = :id")
     fun getTemplateById(id: Long): DataTemplate
