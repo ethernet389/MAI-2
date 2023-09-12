@@ -8,6 +8,12 @@
     <string name="settings">Настройки</string>
     <string name="info">Инфо</string>
 
+    <!-- List/Grid Switch content description -->
+    <string name="list_switch">Переключатель вида на список/сетку</string>
+
+    <!-- Template -->
+    <string name="criteria">Критерии</string>
+
     <!-- Info -->
     <string name="instruction">
         1. Создать шаблон из численно измеряемых критериев

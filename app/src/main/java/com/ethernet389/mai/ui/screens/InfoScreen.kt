@@ -21,7 +21,6 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import com.ethernet389.mai.R
 import com.ethernet389.mai.util.annotatedStringResource
 import com.ethernet389.mai.util.spannableStringToAnnotatedString
@@ -59,7 +58,7 @@ fun InfoCard(
     val context = LocalContext.current
     Card(
         modifier = modifier
-            .padding(5.dp)
+            .padding(dimensionResource(R.dimen.little_padding))
             .fillMaxWidth(),
         elevation = CardDefaults
             .cardElevation(defaultElevation = dimensionResource(R.dimen.card_elevation)),
@@ -68,7 +67,7 @@ fun InfoCard(
     ) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(dimensionResource(R.dimen.large_padding))
         ) {
             Text(
                 text = text,

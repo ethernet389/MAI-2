@@ -7,19 +7,27 @@ import com.ethernet389.data.model.toTemplate
 import com.ethernet389.domain.model.template.BaseTemplate
 import com.ethernet389.domain.model.template.Template
 import com.ethernet389.domain.repository.TemplateRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class RoomTemplateRepository(
     private val templateDao: TemplateDao
 ) : TemplateRepository {
     override suspend fun deleteTemplate(template: Template): Boolean {
-        return templateDao.deleteTemplate(template.toDataTemplate()) != 0
+        return withContext(Dispatchers.IO) {
+            return@withContext templateDao.deleteTemplate(template.toDataTemplate()) != 0
+        }
     }
 
     override suspend fun createTemplate(template: BaseTemplate): Boolean {
-        return templateDao.insertTemplate(template.toDataTemplate()) != -1L
+        return withContext(Dispatchers.IO) {
+            return@withContext templateDao.insertTemplate(template.toDataTemplate()) != -1L
+        }
     }
 
     override suspend fun getTemplates(): List<Template> {
-        return templateDao.getAllTemplates().map(DataTemplate::toTemplate)
+        return withContext(Dispatchers.IO) {
+            return@withContext templateDao.getAllTemplates().map(DataTemplate::toTemplate)
+        }
     }
 }

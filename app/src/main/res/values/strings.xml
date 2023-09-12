@@ -7,6 +7,12 @@
     <string name="settings">Settings</string>
     <string name="info">Info</string>
 
+    <!-- List/Grid Switch content description -->
+    <string name="list_switch">List/Grid Switcher</string>
+
+    <!-- Template -->
+    <string name="criteria">Criteria</string>
+
     <!-- Info -->
     <string name="instruction">
         1. Create a template from numerically measured criteria

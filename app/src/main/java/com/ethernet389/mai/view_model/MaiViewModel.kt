@@ -41,8 +41,15 @@ class MaiViewModel(
         updateData()
     }
 
+    fun createTemplate(template: Template) {
+        viewModelScope.launch {
+            templateController.creator.createTemplate(template)
+            updateTemplates()
+        }
+    }
+
     fun updateTemplates() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _uiStateFlow.update {
                 it.copy(templates = templateController.loader.getTemplates())
             }
@@ -50,7 +57,7 @@ class MaiViewModel(
     }
 
     fun updateNotes() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             _uiStateFlow.update {
                 it.copy(notes = noteController.loader.getNotes())
             }
