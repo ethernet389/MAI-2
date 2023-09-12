@@ -19,6 +19,7 @@ fun NotesScreen(
     isList: Boolean = true,
     modifier: Modifier = Modifier
 ) {
+    
     if (isList) {
         PreviewList(
             items = notes,
