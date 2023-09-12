@@ -10,7 +10,6 @@ import com.ethernet389.domain.use_case.note.NotesLoader
 import com.ethernet389.domain.use_case.template.TemplatesCreator
 import com.ethernet389.domain.use_case.template.TemplatesDeleter
 import com.ethernet389.domain.use_case.template.TemplatesLoader
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
