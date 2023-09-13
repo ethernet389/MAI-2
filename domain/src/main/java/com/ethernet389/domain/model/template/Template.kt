@@ -4,4 +4,6 @@ class Template(
     val id: Long,
     name: String,
     criteria: List<String>
-) : BaseTemplate(name, criteria)
+) : BaseTemplate(name, criteria) {
+    constructor(name: String, criteria: List<String>) : this(0, name, criteria)
+}

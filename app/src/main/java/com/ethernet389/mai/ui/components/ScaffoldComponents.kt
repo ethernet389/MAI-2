@@ -87,7 +87,7 @@ fun NavigationBottomBar(
     modifier: Modifier = Modifier,
     appScreens: Array<MaiScreen>,
     currentScreen: MaiScreen,
-    onRouteClick: (MaiScreen) -> Unit
+    onRouteIconClick: (MaiScreen) -> Unit
 ) {
     NavigationBar(
         modifier = modifier,
@@ -96,7 +96,7 @@ fun NavigationBottomBar(
         appScreens.forEach { item ->
             NavigationBarItem(
                 selected = currentScreen == item,
-                onClick = { onRouteClick(item) },
+                onClick = { onRouteIconClick(item) },
                 icon = {
                     Icon(
                         imageVector = item.navigationIcon,

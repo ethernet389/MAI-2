@@ -13,6 +13,17 @@
     <!-- Template -->
     <string name="criteria">Criteria</string>
 
+    <!-- Creation Form -->
+    <string name="template">Template</string>
+    <string name="cancel">Cancel</string>
+    <string name="create">Create</string>
+    <string name="name">Name</string>
+    <string name="name_example">Clothes #1</string>
+    <string name="criteria_example">Price, Quality, Count…</string>
+
+    <!-- Creation Error Messages -->
+    <string name="empty_field_error">Fields aren\'t filled in!</string>
+
     <!-- Info -->
     <string name="instruction">
         1. Create a template from numerically measured criteria

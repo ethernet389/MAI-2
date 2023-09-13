@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -16,10 +17,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -29,6 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ethernet389.domain.model.template.Template
 import com.ethernet389.mai.ui.components.AppFloatingActionButton
+import com.ethernet389.mai.ui.components.CreationDialog
 import com.ethernet389.mai.ui.components.NavigationBottomBar
 import com.ethernet389.mai.ui.components.TitleAppBar
 import com.ethernet389.mai.ui.router.MaiScreen
@@ -38,6 +43,7 @@ import com.ethernet389.mai.ui.screens.SettingsScreen
 import com.ethernet389.mai.ui.screens.TemplatesScreen
 import com.ethernet389.mai.ui.theme.MAITheme
 import com.ethernet389.mai.view_model.MaiViewModel
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -79,9 +85,17 @@ fun MaiApp(
     val scrollBehavior = TopAppBarDefaults
         .enterAlwaysScrollBehavior(rememberTopAppBarState())
 
+    //Snackbar
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
     //List or Grid view
     var listOn by rememberSaveable {
         mutableStateOf(true)
+    }
+    //Note creation dialog
+    var showCreationDialog by rememberSaveable {
+        mutableStateOf(false)
     }
 
     Scaffold(
@@ -104,7 +118,7 @@ fun MaiApp(
             NavigationBottomBar(
                 appScreens = screenArray,
                 currentScreen = currentScreen ?: MaiScreen.Templates,
-                onRouteClick = { newScreen ->
+                onRouteIconClick = { newScreen ->
                     navController.navigate(route = newScreen.name)
                 }
             )
@@ -114,8 +128,9 @@ fun MaiApp(
                 icon = currentScreen?.fabIcon,
                 visible = creationVisible,
                 onClick = {
-                    val test = Template(0, "test", listOf("can1", "can2", "can3"))
-                    viewModel.createTemplate(test)
+                    when(currentScreen?.name) {
+                        MaiScreen.Templates.name -> showCreationDialog = true
+                    }
                 }
             )
         },
@@ -130,7 +145,33 @@ fun MaiApp(
                 NotesScreen(notes = uiState.notes, isList = listOn)
             }
             composable(route = MaiScreen.Templates.name) {
-                TemplatesScreen(templates = uiState.templates, isList = listOn)
+                val errorMessage = stringResource(R.string.empty_field_error)
+                TemplatesScreen(
+                    templates = uiState.templates,
+                    isList = listOn,
+                    dialogContent = {
+                        if (showCreationDialog) {
+                            CreationDialog(
+                                onDismissRequest = { showCreationDialog = false },
+                                onCreateRequest = { isError, name, criteria ->
+                                    if (isError) {
+                                        scope.launch {
+                                            snackbarHostState.showSnackbar(message = errorMessage)
+                                        }
+                                        return@CreationDialog
+                                    }
+                                    val newTemplate = Template(name = name, criteria = criteria)
+                                    viewModel.createTemplate(newTemplate)
+                                    showCreationDialog = false
+                                },
+                                title = stringResource(R.string.template),
+                                namePlaceholder = stringResource(R.string.name_example),
+                                optionsPlaceholder = stringResource(R.string.criteria_example),
+                                optionsLabel = stringResource(R.string.criteria)
+                            )
+                        }
+                    }
+                )
             }
             composable(route = MaiScreen.Settings.name) { SettingsScreen() }
             composable(route = MaiScreen.Information.name) { InfoScreen() }

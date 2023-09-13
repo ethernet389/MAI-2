@@ -27,24 +27,28 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
 import com.ethernet389.mai.R
 
+
 @Composable
 fun<T> ListGrid(
     isList: Boolean,
     items: List<T>,
     modifier: Modifier = Modifier,
     listItem: @Composable (T) -> Unit,
-    gridItem: @Composable (T) -> Unit
+    gridItem: @Composable (T) -> Unit,
+    bottomContent: @Composable () -> Unit = {}
 ) {
     if (isList) {
         PreviewList(
             items = items,
             previewItem = { listItem(it) },
+            bottomContent = bottomContent,
             modifier = modifier
         )
     } else {
         PreviewGrid(
             items = items,
             previewItem = { gridItem(it) },
+            bottomContent = bottomContent,
             modifier = modifier
         )
     }
@@ -90,6 +94,7 @@ fun ListGridItem(
 fun<T> PreviewGrid(
     items: List<T>,
     previewItem: @Composable (T) -> Unit,
+    bottomContent: @Composable () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -100,6 +105,9 @@ fun<T> PreviewGrid(
         items(items = items) {
             previewItem(it)
         }
+        item {
+            bottomContent()
+        }
     }
 }
 
@@ -107,6 +115,7 @@ fun<T> PreviewGrid(
 fun<T> PreviewList(
     items: List<T>,
     previewItem: @Composable (T) -> Unit,
+    bottomContent: @Composable () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -115,6 +124,9 @@ fun<T> PreviewList(
     ) {
         items(items = items) {
             previewItem(it)
+        }
+        item {
+            bottomContent()
         }
     }
 }

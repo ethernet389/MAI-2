@@ -14,6 +14,17 @@
     <!-- Template -->
     <string name="criteria">Критерии</string>
 
+    <!-- Creation Form -->
+    <string name="template">Шаблон</string>
+    <string name="cancel">Отменить</string>
+    <string name="create">Создать</string>
+    <string name="name">Название</string>
+    <string name="name_example">Одежда #1</string>
+    <string name="criteria_example">Цена, Качество, Количество…</string>
+
+    <!-- Creation Error Messages -->
+    <string name="empty_field_error">Поля не заполнены!</string>
+
     <!-- Info -->
     <string name="instruction">
         1. Создать шаблон из численно измеряемых критериев
