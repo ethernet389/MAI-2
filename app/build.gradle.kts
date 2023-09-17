@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.serialization")
     id("com.google.devtools.ksp")
 }
 
@@ -61,6 +62,10 @@ dependencies {
 
     //Extended Material Icons
     implementation("androidx.compose.material:material-icons-extended:1.5.1")
+
+    //Kotlin Serialization
+    val serializtion_version = "1.5.1"
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializtion_version")
 
     //Room
     val room_version = "2.5.2"

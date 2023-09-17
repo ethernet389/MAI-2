@@ -8,12 +8,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -85,10 +87,6 @@ fun MaiApp(
     val scrollBehavior = TopAppBarDefaults
         .enterAlwaysScrollBehavior(rememberTopAppBarState())
 
-    //Snackbar
-    val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
-
     //List or Grid view
     var listOn by rememberSaveable {
         mutableStateOf(true)
@@ -145,7 +143,7 @@ fun MaiApp(
                 NotesScreen(notes = uiState.notes, isList = listOn)
             }
             composable(route = MaiScreen.Templates.name) {
-                val errorMessage = stringResource(R.string.empty_field_error)
+                val errorMessage = stringResource(R.string.empty_fields_error)
                 TemplatesScreen(
                     templates = uiState.templates,
                     isList = listOn,
@@ -153,13 +151,7 @@ fun MaiApp(
                         if (showCreationDialog) {
                             CreationDialog(
                                 onDismissRequest = { showCreationDialog = false },
-                                onCreateRequest = { isError, name, criteria ->
-                                    if (isError) {
-                                        scope.launch {
-                                            snackbarHostState.showSnackbar(message = errorMessage)
-                                        }
-                                        return@CreationDialog
-                                    }
+                                onCreateRequest = { name, criteria ->
                                     val newTemplate = Template(name = name, criteria = criteria)
                                     viewModel.createTemplate(newTemplate)
                                     showCreationDialog = false

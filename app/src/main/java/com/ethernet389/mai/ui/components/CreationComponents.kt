@@ -30,13 +30,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.ethernet389.mai.R
 
+
+private val delimiters = Regex("""\s*[,;]+\s*""")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreationDialog(
     onDismissRequest: () -> Unit,
-    onCreateRequest: (Boolean, String, List<String>) -> Unit,
+    onCreateRequest:(String, List<String>) -> Unit,
     title: String,
     namePlaceholder: String,
+    nameTitle: String = stringResource(R.string.name),
     optionsPlaceholder: String,
     optionsLabel: String,
     modifier: Modifier = Modifier
@@ -44,19 +47,10 @@ fun CreationDialog(
     Dialog(
         onDismissRequest = onDismissRequest,
     ) {
-        var name by rememberSaveable {
-            mutableStateOf("")
-        }
-        var options by rememberSaveable {
-            mutableStateOf("")
-        }
-
-        var isNameError by rememberSaveable {
-            mutableStateOf(false)
-        }
-        var isOptionsError by rememberSaveable {
-            mutableStateOf(false)
-        }
+        var name by rememberSaveable { mutableStateOf("") }
+        var options by rememberSaveable { mutableStateOf("") }
+        var isNameError by rememberSaveable { mutableStateOf(false) }
+        var isOptionsError by rememberSaveable { mutableStateOf(false) }
 
         Card(
             modifier = modifier.width(200.dp),
@@ -75,7 +69,7 @@ fun CreationDialog(
                     value = name,
                     onValueChange = { newName -> name = newName },
                     placeholder = { Text(text = namePlaceholder) },
-                    label = { Text(text = stringResource(R.string.name)) },
+                    label = { Text(text = nameTitle) },
                     singleLine = true,
                     isError = isNameError
                 )
@@ -98,14 +92,13 @@ fun CreationDialog(
                     Spacer(modifier = Modifier.width(10.dp))
                     Button(
                         onClick = {
-                            val separatedOptions = options
-                                .split(" ,", " , ", ", ")
+                            val listedOptions = options
+                                .split(delimiters)
                                 .filter { option -> option.isNotBlank() }
-                            isOptionsError = separatedOptions.isEmpty()
+                            isOptionsError = listedOptions.isEmpty()
                             isNameError = name.isBlank()
-                            onCreateRequest(
-                                isOptionsError || isNameError, name, separatedOptions
-                            )
+                            if (isNameError || isOptionsError) return@Button
+                            onCreateRequest(name, listedOptions)
                         }
                     ) {
                         Text(text = stringResource(R.string.create))

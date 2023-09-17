@@ -23,7 +23,7 @@
     <string name="criteria_example">Цена, Качество, Количество…</string>
 
     <!-- Creation Error Messages -->
-    <string name="empty_field_error">Поля не заполнены!</string>
+    <string name="empty_fields_error">Поля не заполнены!</string>
 
     <!-- Info -->
     <string name="instruction">
