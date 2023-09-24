@@ -94,17 +94,18 @@ fun NavigationBottomBar(
         tonalElevation = 3.dp,
     ) {
         appScreens.forEach { item ->
-            NavigationBarItem(
-                selected = currentScreen == item,
-                onClick = { onRouteIconClick(item) },
-                icon = {
-                    Icon(
-                        imageVector = item.navigationIcon,
-                        contentDescription = stringResource(item.navigationTitle)
-                    )
-                },
-                label = { Text(stringResource(item.navigationTitle)) }
-            )
+            if (item.isVisibleRoute)
+                NavigationBarItem(
+                    selected = currentScreen == item,
+                    onClick = { onRouteIconClick(item) },
+                    icon = {
+                        Icon(
+                            imageVector = item.navigationIcon,
+                            contentDescription = stringResource(item.navigationTitle)
+                        )
+                    },
+                    label = { Text(stringResource(item.navigationTitle)) }
+                )
         }
     }
 }

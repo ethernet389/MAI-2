@@ -27,7 +27,6 @@ import com.ethernet389.mai.ui.components.TextBody
 fun TemplatesScreen(
     templates: List<Template>,
     isList: Boolean = true,
-    dialogContent: @Composable () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -51,7 +50,6 @@ fun TemplatesScreen(
         Divider(thickness = 1.dp)
         TemplateListGrid(isList = isList, templates = templates, modifier = Modifier.fillMaxSize())
     }
-    dialogContent()
 }
 
 @Composable

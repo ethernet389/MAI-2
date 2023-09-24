@@ -12,15 +12,21 @@
     <string name="list_switch">Переключатель вида на список/сетку</string>
 
     <!-- Template -->
+    <string name="template">Шаблон</string>
     <string name="criteria">Критерии</string>
+    <string name="template_name_example">Одежда</string>
+    <string name="criteria_example">Цена, Качество, Количество…</string>
+
+    <!-- Note -->
+    <string name="note">Note</string>
+    <string name="note_name_example">Одежда из…</string>
+    <string name="alternatives">Альтернативы</string>
+    <string name="alternatives_example">Куртка, Рубашка, Футболка…</string>
 
     <!-- Creation Form -->
-    <string name="template">Шаблон</string>
     <string name="cancel">Отменить</string>
     <string name="create">Создать</string>
     <string name="name">Название</string>
-    <string name="name_example">Одежда #1</string>
-    <string name="criteria_example">Цена, Качество, Количество…</string>
 
     <!-- Creation Error Messages -->
     <string name="empty_fields_error">Поля не заполнены!</string>

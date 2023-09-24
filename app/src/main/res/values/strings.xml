@@ -11,15 +11,21 @@
     <string name="list_switch">List/Grid Switcher</string>
 
     <!-- Template -->
+    <string name="template">Template</string>
     <string name="criteria">Criteria</string>
+    <string name="template_name_example">Clothes</string>
+    <string name="criteria_example">Price, Quality, Count…</string>
+
+    <!-- Note -->
+    <string name="note">Note</string>
+    <string name="note_name_example">Clothes from…</string>
+    <string name="alternatives">Alternatives</string>
+    <string name="alternatives_example">Jacket, Shirt, T-Shirt…</string>
 
     <!-- Creation Form -->
-    <string name="template">Template</string>
     <string name="cancel">Cancel</string>
     <string name="create">Create</string>
     <string name="name">Name</string>
-    <string name="name_example">Clothes #1</string>
-    <string name="criteria_example">Price, Quality, Count…</string>
 
     <!-- Creation Error Messages -->
     <string name="empty_fields_error">Fields aren\'t filled in!</string>
