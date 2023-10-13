@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">МАИ</string>
 
-    <!-- Navigation Labels -->
+    <!-- Navigation Labels-->
     <string name="notes">Записи</string>
     <string name="templates">Шаблоны</string>
     <string name="settings">Настройки</string>
@@ -18,7 +18,7 @@
     <string name="criteria_example">Цена, Качество, Количество…</string>
 
     <!-- Note -->
-    <string name="note">Note</string>
+    <string name="note">Запись</string>
     <string name="note_name_example">Одежда из…</string>
     <string name="alternatives">Альтернативы</string>
     <string name="alternatives_example">Куртка, Рубашка, Футболка…</string>

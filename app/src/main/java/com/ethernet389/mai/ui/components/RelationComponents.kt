@@ -2,6 +2,7 @@ package com.ethernet389.mai.ui.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -35,7 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -103,13 +104,32 @@ fun RelationScale(
 fun ParameterToParameter(
     firstParameter: String,
     secondParameter: String,
-    isPlaceChanged: Boolean,
+    isInverse: Boolean,
     onArrowClick: () -> Unit,
     relationValue: Int,
     onMinusClick: () -> Unit,
     onPlusClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val degrees by animateFloatAsState(
+        targetValue = if (isInverse) 3*180f else 0f,
+        label = "Rotate arrow on 3*180 degrees",
+        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+    )
+    val color by animateColorAsState(
+        targetValue = colorResource(
+            if (isInverse) R.color.is_inverse_color else R.color.is_not_inverse_color
+        ),
+        label = "Change color to opposite",
+        animationSpec = tween(durationMillis = 300, easing = LinearEasing)
+    )
+    val inverseColor by animateColorAsState(
+        targetValue = colorResource(
+            if (!isInverse) R.color.is_inverse_color else R.color.is_not_inverse_color
+        ),
+        label = "Change color to opposite",
+        animationSpec = tween(durationMillis = 300, easing = LinearEasing)
+    )
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -122,14 +142,10 @@ fun ParameterToParameter(
                 text = firstParameter,
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
+                color = color,
                 modifier = Modifier.weight(1f)
             )
             IconButton(onClick = onArrowClick) {
-                val degrees by animateFloatAsState(
-                    targetValue = if (isPlaceChanged) 0f else 180f,
-                    label = "Rotate arrow on 180 degrees",
-                    animationSpec = tween(durationMillis = 200, easing = LinearEasing)
-                )
                 Icon(
                     imageVector = Icons.Filled.East,
                     contentDescription = null,
@@ -140,6 +156,7 @@ fun ParameterToParameter(
                 text = secondParameter,
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
+                color = inverseColor,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -172,7 +189,7 @@ fun RelationCard(
         ParameterToParameter(
             firstParameter = firstParameter,
             secondParameter = secondParameter,
-            isPlaceChanged = isPlaceChanged,
+            isInverse = isPlaceChanged,
             onArrowClick = onArrowClick,
             relationValue = relationValue,
             onMinusClick = onMinusClick,

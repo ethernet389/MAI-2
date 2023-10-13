@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Arrow Colors -->
+    <color name="is_inverse_color">#ff4d4d</color>
+    <color name="is_not_inverse_color">#4dff4d</color>
+</resources>

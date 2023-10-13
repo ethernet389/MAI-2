@@ -1,9 +1,9 @@
 package com.ethernet389.mai.mai
 
+import com.ethernet389.mai.matrix_extensions.KMatrix
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import com.ethernet389.mai.matrix_extensions.KMatrix
 
 @Serializable
 data class FinalWeights(

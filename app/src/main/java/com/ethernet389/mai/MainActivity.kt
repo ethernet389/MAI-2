@@ -1,7 +1,6 @@
 package com.ethernet389.mai
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,18 +20,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.ethernet389.mai.ui.components.AppFloatingActionButton
-import com.ethernet389.mai.ui.components.TemplateCreationDialog
 import com.ethernet389.mai.ui.components.NavigationBottomBar
 import com.ethernet389.mai.ui.components.NoteCreationDialog
+import com.ethernet389.mai.ui.components.TemplateCreationDialog
 import com.ethernet389.mai.ui.components.TitleAppBar
 import com.ethernet389.mai.ui.router.MaiScreen
+import com.ethernet389.mai.ui.screens.CardActions
 import com.ethernet389.mai.ui.screens.CreateNoteScreen
 import com.ethernet389.mai.ui.screens.InfoScreen
 import com.ethernet389.mai.ui.screens.NotesScreen
@@ -40,8 +38,6 @@ import com.ethernet389.mai.ui.screens.SettingsScreen
 import com.ethernet389.mai.ui.screens.TemplatesScreen
 import com.ethernet389.mai.ui.theme.MAITheme
 import com.ethernet389.mai.view_model.MaiViewModel
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -68,21 +64,21 @@ fun MaiApp(
     viewModel: MaiViewModel = koinViewModel(),
     navController: NavHostController = rememberNavController()
 ) {
-    //UI state
+    //UI state and creation note state
     val uiState by viewModel.uiStateFlow.collectAsState()
+    val creationNoteState by viewModel.creationNoteState.collectAsState()
 
     //Current navigation screen
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
     val screenArray = MaiScreen.values()
-    //Use contains because "${MaiScreen.CreateNotes.name}/{note_name}/{template_id}/{alternatives}"
-    //one of routes
+    //Use split because "${MaiScreen.CreateNotes.name}/{note_name}/{template_id}/{alternatives}"
+    //Deep links no needs
     val currentScreen = screenArray.find {
-        currentDestination?.route?.contains(it.name) != null
+        val routeName = currentDestination?.route?.split("/")?.first()
+        routeName == it.name
     }
     val fabVisible = currentScreen?.fabIcon != null
-    Log.d("fabVisible", currentScreen?.fabIcon.toString())
-    Log.d("currentScreenNullable", currentScreen.toString())
     val listGridSwitchVisible = when (currentScreen) {
         MaiScreen.Templates, MaiScreen.Notes -> true
         else -> false
@@ -130,9 +126,13 @@ fun MaiApp(
                 icon = currentScreen?.fabIcon,
                 visible = fabVisible,
                 onClick = {
-                    when(currentScreen) {
+                    when (currentScreen) {
                         MaiScreen.Notes, MaiScreen.Templates -> showCreationDialog = true
-                        MaiScreen.CreateNotes -> null
+                        MaiScreen.CreateNotes -> {
+                            creationNoteState.relationList
+                            viewModel.dropCreationNoteState()
+                        }
+
                         else -> {}
                     }
                 }
@@ -151,11 +151,12 @@ fun MaiApp(
                     NoteCreationDialog(
                         onDismissRequest = { showCreationDialog = false },
                         onCreateRequest = { noteName, chosenTemplate, alternatives ->
-                            val route = MaiScreen.CreateNotes.name +
-                                    "/$noteName" +
-                                    "/${chosenTemplate.id}" +
-                                    "/${Json.encodeToString(alternatives)}"
-                            navController.navigate(route)
+                            val template = uiState.templates.find { it.id == chosenTemplate.id }!!
+                            if (alternatives.size <= 1 && template.criteria.size <= 1) {
+                                return@NoteCreationDialog
+                            }
+                            viewModel.updateCreationNoteState(noteName, template, alternatives)
+                            navController.navigate(MaiScreen.CreateNotes.name)
                             showCreationDialog = false
                         },
                         templates = uiState.templates
@@ -176,35 +177,22 @@ fun MaiApp(
             }
             composable(route = MaiScreen.Settings.name) { SettingsScreen() }
             composable(route = MaiScreen.Information.name) { InfoScreen() }
-            composable(
-                route = "${MaiScreen.CreateNotes.name}/{note_name}/{template_id}/{alternatives}",
-                arguments = listOf(
-                    navArgument("note_name") { type = NavType.StringType },
-                    navArgument("template_id") { type = NavType.LongType },
-                    navArgument("alternatives") { type = NavType.StringType }
+            composable(route = MaiScreen.CreateNotes.name) {
+                val cardActions = CardActions(
+                    onArrowClick = { i, j, newRelationInfo ->
+                        viewModel.updateCreationNoteState(i, j, newRelationInfo)
+                    },
+                    onMinusClick = { i, j, newRelationInfo ->
+                        viewModel.updateCreationNoteState(i, j, newRelationInfo)
+                    },
+                    onPlusClick = { i, j, newRelationInfo ->
+                        viewModel.updateCreationNoteState(i, j, newRelationInfo)
+                    }
                 )
-            ) { navBackStackEntry ->
-                val noteName = navBackStackEntry.arguments?.getString("note_name")
-                val templateId = navBackStackEntry.arguments?.getLong("template_id")
-                val packedAlternatives = navBackStackEntry.arguments?.getString("alternatives")
-                if (
-                    noteName == null
-                    || templateId == null
-                    || packedAlternatives == null
-                ) {
-                    navController.popBackStack(route = MaiScreen.Notes.name, inclusive = false)
-                    return@composable
-                }
-                val alternatives = Json.decodeFromString<List<String>>(packedAlternatives)
-                val template = uiState.templates.find { it.id == templateId }!!
-                if (template.criteria.size <= 1 && alternatives.size <= 1) {
-                    navController.popBackStack(route = MaiScreen.Notes.name, inclusive = false)
-                    return@composable
-                }
                 CreateNoteScreen(
-                    noteName = noteName,
-                    template = template,
-                    alternatives = alternatives
+                    noteName = creationNoteState.noteName,
+                    relationsMassive = creationNoteState.relationList,
+                    relationCardActions = cardActions
                 )
             }
         }
