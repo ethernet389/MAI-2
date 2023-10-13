@@ -1,26 +1,20 @@
 package com.ethernet389.mai.ui.screens
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ethernet389.domain.model.template.Template
 import com.ethernet389.mai.R
 import com.ethernet389.mai.ui.components.ListGrid
 import com.ethernet389.mai.ui.components.ListGridItem
+import com.ethernet389.mai.ui.components.SupportScaffoldTitle
 import com.ethernet389.mai.ui.components.TextBody
 
 @Composable
@@ -33,20 +27,7 @@ fun TemplatesScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        Box(
-            contentAlignment = Alignment.TopStart,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.tertiaryContainer)
-        ) {
-            Text(
-                text = stringResource(R.string.templates),
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.padding(start = 4.dp, bottom = 2.dp, top = 2.dp),
-                color = MaterialTheme.colorScheme.onTertiaryContainer
-            )
-        }
+        SupportScaffoldTitle(text = stringResource(R.string.templates))
         Divider(thickness = 1.dp)
         TemplateListGrid(isList = isList, templates = templates, modifier = Modifier.fillMaxSize())
     }

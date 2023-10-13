@@ -23,7 +23,7 @@ data class Controller<Creator, Loader, Deleter>(
 
 data class MaiUiState(
     val templates: List<Template>,
-    val notes: List<Note>,
+    val notes: List<Note>
 ) {
     constructor() : this(emptyList(), emptyList())
 }
@@ -35,7 +35,6 @@ class MaiViewModel(
 
     private var _uiStateFlow = MutableStateFlow(MaiUiState())
     val uiStateFlow = _uiStateFlow.asStateFlow()
-
     init {
         updateData()
     }

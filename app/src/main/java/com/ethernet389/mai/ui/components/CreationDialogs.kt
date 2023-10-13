@@ -222,7 +222,9 @@ fun NoteCreationDialog(
                     Button(
                         onClick = {
                             isNameError = name.isBlank()
-                            val splitAlternatives = alternatives.split(delimiters)
+                            val splitAlternatives = alternatives
+                                .split(delimiters)
+                                .filter { it.isNotBlank() }
                             isAlternativeError = splitAlternatives.isEmpty()
                             if (
                                 isNameError || selectedIndex == null || isAlternativeError

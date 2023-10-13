@@ -1,6 +1,7 @@
 package com.ethernet389.mai
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -74,10 +75,18 @@ fun MaiApp(
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
     val screenArray = MaiScreen.values()
+    //Use contains because "${MaiScreen.CreateNotes.name}/{note_name}/{template_id}/{alternatives}"
+    //one of routes
     val currentScreen = screenArray.find {
-        it.name == currentDestination?.route
+        currentDestination?.route?.contains(it.name) != null
     }
-    val creationVisible = currentScreen?.fabIcon != null
+    val fabVisible = currentScreen?.fabIcon != null
+    Log.d("fabVisible", currentScreen?.fabIcon.toString())
+    Log.d("currentScreenNullable", currentScreen.toString())
+    val listGridSwitchVisible = when (currentScreen) {
+        MaiScreen.Templates, MaiScreen.Notes -> true
+        else -> false
+    }
 
     val scrollBehavior = TopAppBarDefaults
         .enterAlwaysScrollBehavior(rememberTopAppBarState())
@@ -100,7 +109,7 @@ fun MaiApp(
                         containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                         titleContentColor = MaterialTheme.colorScheme.onTertiaryContainer
                     ),
-                listGridSwitchVisible = creationVisible,
+                listGridSwitchVisible = listGridSwitchVisible,
                 listOn = listOn,
                 onListGridSwitchClick = {
                     listOn = !listOn
@@ -110,7 +119,7 @@ fun MaiApp(
         bottomBar = {
             NavigationBottomBar(
                 appScreens = screenArray,
-                currentScreen = currentScreen ?: MaiScreen.Templates,
+                currentScreen = currentScreen,
                 onRouteIconClick = { newScreen ->
                     navController.navigate(route = newScreen.name)
                 }
@@ -119,9 +128,13 @@ fun MaiApp(
         floatingActionButton = {
             AppFloatingActionButton(
                 icon = currentScreen?.fabIcon,
-                visible = creationVisible,
+                visible = fabVisible,
                 onClick = {
-                    showCreationDialog = true
+                    when(currentScreen) {
+                        MaiScreen.Notes, MaiScreen.Templates -> showCreationDialog = true
+                        MaiScreen.CreateNotes -> null
+                        else -> {}
+                    }
                 }
             )
         },
@@ -174,12 +187,20 @@ fun MaiApp(
                 val noteName = navBackStackEntry.arguments?.getString("note_name")
                 val templateId = navBackStackEntry.arguments?.getLong("template_id")
                 val packedAlternatives = navBackStackEntry.arguments?.getString("alternatives")
-                if (noteName == null || templateId == null || packedAlternatives == null) {
+                if (
+                    noteName == null
+                    || templateId == null
+                    || packedAlternatives == null
+                ) {
                     navController.popBackStack(route = MaiScreen.Notes.name, inclusive = false)
                     return@composable
                 }
                 val alternatives = Json.decodeFromString<List<String>>(packedAlternatives)
                 val template = uiState.templates.find { it.id == templateId }!!
+                if (template.criteria.size <= 1 && alternatives.size <= 1) {
+                    navController.popBackStack(route = MaiScreen.Notes.name, inclusive = false)
+                    return@composable
+                }
                 CreateNoteScreen(
                     noteName = noteName,
                     template = template,

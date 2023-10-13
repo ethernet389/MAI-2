@@ -18,3 +18,4 @@ rootProject.name = "MAI"
 include(":app")
 include(":domain")
 include(":data")
+include(":mai")

@@ -12,6 +12,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -32,6 +35,7 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -86,7 +90,7 @@ fun TitleAppBar(
 fun NavigationBottomBar(
     modifier: Modifier = Modifier,
     appScreens: Array<MaiScreen>,
-    currentScreen: MaiScreen,
+    currentScreen: MaiScreen?,
     onRouteIconClick: (MaiScreen) -> Unit
 ) {
     NavigationBar(
@@ -162,5 +166,23 @@ fun AppFloatingActionButton(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun SupportScaffoldTitle(text: String) {
+    Box(
+        contentAlignment = Alignment.TopStart,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.tertiaryContainer)
+    ) {
+        Text(
+            text = text,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier.padding(start = 4.dp, bottom = 2.dp, top = 2.dp),
+            color = MaterialTheme.colorScheme.onTertiaryContainer
+        )
     }
 }
