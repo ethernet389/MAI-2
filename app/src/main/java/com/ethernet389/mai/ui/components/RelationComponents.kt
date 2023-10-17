@@ -29,7 +29,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,13 +46,13 @@ import com.ethernet389.mai.R
 
 @Composable
 fun RelationScale(
-    currentValue: Int,
+    currentValue: Double,
     onMinusClick: () -> Unit,
     onPlusClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var previousValue by rememberSaveable {
-        mutableIntStateOf(currentValue)
+        mutableDoubleStateOf(currentValue)
     }
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -106,13 +108,13 @@ fun ParameterToParameter(
     secondParameter: String,
     isInverse: Boolean,
     onArrowClick: () -> Unit,
-    relationValue: Int,
+    relationValue: Double,
     onMinusClick: () -> Unit,
     onPlusClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val degrees by animateFloatAsState(
-        targetValue = if (isInverse) 3*180f else 0f,
+        targetValue = if (isInverse) 3 * 180f else 0f,
         label = "Rotate arrow on 3*180 degrees",
         animationSpec = tween(durationMillis = 200, easing = LinearEasing)
     )
@@ -172,9 +174,9 @@ fun ParameterToParameter(
 fun RelationCard(
     firstParameter: String,
     secondParameter: String,
-    isPlaceChanged: Boolean,
+    relationValue: Double,
+    isInverse: Boolean,
     onArrowClick: () -> Unit,
-    relationValue: Int,
     onMinusClick: () -> Unit,
     onPlusClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -189,7 +191,7 @@ fun RelationCard(
         ParameterToParameter(
             firstParameter = firstParameter,
             secondParameter = secondParameter,
-            isInverse = isPlaceChanged,
+            isInverse = isInverse,
             onArrowClick = onArrowClick,
             relationValue = relationValue,
             onMinusClick = onMinusClick,

@@ -5,8 +5,8 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_7
-    targetCompatibility = JavaVersion.VERSION_1_7
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 dependencies {
@@ -14,6 +14,6 @@ dependencies {
     implementation("gov.nist.math:jama:1.0.3")
 
     //Kotlin Serialization
-    val serializtion_version = "1.5.1"
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializtion_version")
+    val serialization_version = "1.5.1"
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
 }

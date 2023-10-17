@@ -55,6 +55,9 @@ dependencies {
     //modules
     implementation(project(":data"))
     implementation(project(":domain"))
+    implementation(project(":mai"))
+    //Jama
+    implementation("gov.nist.math:jama:1.0.3")
 
     //Navigation API
     val nav_version = "2.7.2"

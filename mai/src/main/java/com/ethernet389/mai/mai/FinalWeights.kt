@@ -20,7 +20,7 @@ data class FinalWeights(
 @Serializable
 data class InputParameters(
     val criteriaMatrix: KMatrix,
-    val candidatesMatrix: List<KMatrix>
+    val candidatesMatrices: List<KMatrix>
 ) {
     fun encodeToString() = Json.encodeToString(this)
 

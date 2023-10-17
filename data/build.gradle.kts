@@ -41,8 +41,8 @@ dependencies {
     implementation("androidx.test.ext:junit-ktx:1.1.5")
 
     //Kotlin Serialization
-    val serializtion_version = "1.5.1"
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializtion_version")
+    val serialization_version = "1.5.1"
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
 
     //Room
     val room_version = "2.5.2"

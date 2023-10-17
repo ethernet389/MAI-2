@@ -1,7 +1,9 @@
 package com.ethernet389.mai.view_model
 
+import Jama.Matrix
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ethernet389.domain.model.note.BaseNote
 import com.ethernet389.domain.model.note.Note
 import com.ethernet389.domain.model.template.Template
 import com.ethernet389.domain.use_case.note.NotesCreator
@@ -10,10 +12,13 @@ import com.ethernet389.domain.use_case.note.NotesLoader
 import com.ethernet389.domain.use_case.template.TemplatesCreator
 import com.ethernet389.domain.use_case.template.TemplatesDeleter
 import com.ethernet389.domain.use_case.template.TemplatesLoader
+import com.ethernet389.mai.mai.InputParameters
+import com.ethernet389.mai.matrix_extensions.KMatrix
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 data class Controller<Creator, Loader, Deleter>(
     val creator: Creator,
@@ -29,25 +34,65 @@ data class MaiUiState(
 }
 
 //Note Creation Info Data Classes
-val relationScale = 1..9
+val relationScale = 1.0..9.0
 
-data class RelationInfo(
-    val firstParameter: String,
-    val secondParameter: String,
-    val relationValue: Int = 1,
-    val isInverse: Boolean = false
-)
-
-data class RelationInfoMassive(
-    val relationName: String,
-    val relations: List<RelationInfo>
-)
-
+//First Matrix Is Template Relation
 data class CreationNoteInfo(
     val noteName: String,
-    val relationList: List<RelationInfoMassive>
+    val template: Template,
+    val alternatives: List<String>,
+    val relationMatrices: List<Matrix>,
 ) {
-    constructor() : this("", emptyList())
+    //Check the matrices for consistency
+    init {
+        //Check sizes
+        require(relationMatrices.size == template.criteria.size + 1)
+        //Template matrix
+        with(relationMatrices.first()) {
+            require(
+                this.columnDimension == this.rowDimension &&
+                        this.columnDimension == template.criteria.size
+            )
+        }
+        //Candidates matrices
+        for (i in 1..relationMatrices.lastIndex) {
+            require(
+                relationMatrices[i].columnDimension == relationMatrices[i].rowDimension &&
+                        relationMatrices[i].columnDimension == alternatives.size
+            )
+        }
+    }
+
+    constructor() : this(
+        noteName = "",
+        template = Template(),
+        alternatives = emptyList(),
+        relationMatrices = listOf(Matrix(0, 0))
+    )
+
+    constructor(
+        noteName: String,
+        template: Template,
+        alternatives: List<String>
+    ) : this(
+        noteName = noteName,
+        template = template,
+        alternatives = alternatives,
+        relationMatrices = listOf(
+            Matrix(
+                template.criteria.size,
+                template.criteria.size,
+                relationScale.start
+            )
+        ) +
+        List(template.criteria.size) {
+            Matrix(
+                alternatives.size,
+                alternatives.size,
+                relationScale.start
+            )
+        }
+    )
 }
 
 class MaiViewModel(
@@ -95,63 +140,72 @@ class MaiViewModel(
     private var _creationNoteState = MutableStateFlow(CreationNoteInfo())
     val creationNoteState = _creationNoteState.asStateFlow()
 
-    fun updateCreationNoteState(noteName: String, template: Template, alternatives: List<String>) {
-        val relationsMassive = getAllRelations(template, alternatives)
-        _creationNoteState.update { CreationNoteInfo(noteName, relationsMassive) }
+    fun postNoteFromCreationNote() {
+        viewModelScope.launch {
+            val inputParameters = creationNoteState.value.toInputParameters(creationNoteState.value)
+            val newNote = with(creationNoteState.value) {
+                BaseNote(
+                    name = noteName,
+                    template = template,
+                    candidates = alternatives,
+                    report = inputParameters.encodeToString()
+                )
+            }
+            noteController.creator.createNote(newNote)
+            updateNotes()
+        }
     }
 
-    fun updateCreationNoteState(i: Int, j: Int, newRelationInfo: RelationInfo) {
+    fun createNewCreationNoteState(
+        noteName: String,
+        template: Template,
+        alternatives: List<String>
+    ) {
         _creationNoteState.update {
-            val newRelationList = it.relationList[i]
-                .relations
-                .toMutableList()
-                .apply { this[j] = newRelationInfo }
-            val newListOfRelationInfoMassive = it.relationList.toMutableList().apply {
-                this[i] = this[i].copy(relations = newRelationList)
-            }
-            it.copy(relationList = newListOfRelationInfoMassive)
+            CreationNoteInfo(
+                noteName = noteName,
+                template = template,
+                alternatives = alternatives
+            )
+        }
+    }
+
+    //h - position in relation list, i - position of row, j - position of column
+    fun updateMatrixByIndex(h: Int, i: Int, j: Int, newValue: Double) {
+        require(newValue in relationScale)
+        _creationNoteState.update {
+            it.copy(
+                relationMatrices = it.relationMatrices
+                    .apply {
+                        this[h][i, j] = newValue
+                        this[h][j, i] = 1 / newValue
+                    }
+            )
+        }
+    }
+
+    fun swapValuesMatrix(h: Int, i: Int, j: Int) {
+        _creationNoteState.update {
+            it.copy(
+                relationMatrices = it.relationMatrices
+                    .apply {
+                        val temp = this[h][i, j]
+                        this[h][i, j] = this[h][j, i]
+                        this[h][j, i] = temp
+                    }
+            )
         }
     }
 
     fun dropCreationNoteState() = _creationNoteState.update { CreationNoteInfo() }
 }
 
-fun getAllRelationsCombinations(relationMembers: List<String>): List<RelationInfo> {
-    val relations = mutableListOf<RelationInfo>()
-    for (i in relationMembers.indices) {
-        val first = relationMembers[i]
-        for (j in (i + 1)..relationMembers.lastIndex) {
-            val second = relationMembers[j]
-            relations.add(RelationInfo(first, second))
-        }
-    }
-    return relations
-}
-
-fun getAllRelations(
-    template: Template,
-    alternatives: List<String>
-): List<RelationInfoMassive> {
-    val relations = mutableListOf<RelationInfoMassive>()
-    //Template base relations
-    val templateRelations = getAllRelationsCombinations(relationMembers = template.criteria)
-    if (templateRelations.isNotEmpty()) {
-        relations.add(
-            RelationInfoMassive(
-                relationName = template.name,
-                relations = templateRelations
-            )
+fun CreationNoteInfo.toInputParameters(noteInfo: CreationNoteInfo): InputParameters =
+    with(noteInfo) {
+        InputParameters(
+            criteriaMatrix = KMatrix(noteInfo.relationMatrices.first()),
+            candidatesMatrices = relationMatrices
+                .subList(1, relationMatrices.lastIndex)
+                .map { KMatrix(it) }
         )
     }
-    //Alternatives base relations
-    val alternativesRelations = getAllRelationsCombinations(relationMembers = alternatives)
-    if (alternativesRelations.isNotEmpty()) {
-        for (criterion in template.criteria) {
-            val relationMassive = RelationInfoMassive(
-                relationName = criterion, relations = alternativesRelations
-            )
-            relations.add(relationMassive)
-        }
-    }
-    return relations
-}

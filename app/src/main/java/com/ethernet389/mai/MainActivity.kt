@@ -1,10 +1,13 @@
 package com.ethernet389.mai
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -38,6 +41,7 @@ import com.ethernet389.mai.ui.screens.SettingsScreen
 import com.ethernet389.mai.ui.screens.TemplatesScreen
 import com.ethernet389.mai.ui.theme.MAITheme
 import com.ethernet389.mai.view_model.MaiViewModel
+import com.ethernet389.mai.view_model.relationScale
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -64,7 +68,7 @@ fun MaiApp(
     viewModel: MaiViewModel = koinViewModel(),
     navController: NavHostController = rememberNavController()
 ) {
-    //UI state and creation note state
+    //UI state and current creation note state
     val uiState by viewModel.uiStateFlow.collectAsState()
     val creationNoteState by viewModel.creationNoteState.collectAsState()
 
@@ -72,11 +76,8 @@ fun MaiApp(
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
     val screenArray = MaiScreen.values()
-    //Use split because "${MaiScreen.CreateNotes.name}/{note_name}/{template_id}/{alternatives}"
-    //Deep links no needs
     val currentScreen = screenArray.find {
-        val routeName = currentDestination?.route?.split("/")?.first()
-        routeName == it.name
+        currentDestination?.route == it.name
     }
     val fabVisible = currentScreen?.fabIcon != null
     val listGridSwitchVisible = when (currentScreen) {
@@ -84,6 +85,7 @@ fun MaiApp(
         else -> false
     }
 
+    //Folded scroll behavior
     val scrollBehavior = TopAppBarDefaults
         .enterAlwaysScrollBehavior(rememberTopAppBarState())
 
@@ -129,7 +131,6 @@ fun MaiApp(
                     when (currentScreen) {
                         MaiScreen.Notes, MaiScreen.Templates -> showCreationDialog = true
                         MaiScreen.CreateNotes -> {
-                            creationNoteState.relationList
                             viewModel.dropCreationNoteState()
                         }
 
@@ -152,14 +153,16 @@ fun MaiApp(
                         onDismissRequest = { showCreationDialog = false },
                         onCreateRequest = { noteName, chosenTemplate, alternatives ->
                             val template = uiState.templates.find { it.id == chosenTemplate.id }!!
+                            //Show error message when number of alternatives = 1 and number criteria = 1
                             if (alternatives.size <= 1 && template.criteria.size <= 1) {
                                 return@NoteCreationDialog
                             }
-                            viewModel.updateCreationNoteState(noteName, template, alternatives)
+                            viewModel.createNewCreationNoteState(noteName, template, alternatives)
                             navController.navigate(MaiScreen.CreateNotes.name)
                             showCreationDialog = false
                         },
-                        templates = uiState.templates
+                        templates = uiState.templates,
+                        modifier = Modifier.verticalScroll(state = rememberScrollState())
                     )
                 }
             }
@@ -171,28 +174,45 @@ fun MaiApp(
                         onCreateRequest = { newTemplate ->
                             viewModel.createTemplate(newTemplate)
                             showCreationDialog = false
-                        }
+                        },
+                        modifier = Modifier.verticalScroll(state = rememberScrollState())
                     )
                 }
             }
             composable(route = MaiScreen.Settings.name) { SettingsScreen() }
             composable(route = MaiScreen.Information.name) { InfoScreen() }
             composable(route = MaiScreen.CreateNotes.name) {
+                val noTemplateCriteriaComparison = creationNoteState.template.criteria.size == 1
+                val noCandidatesComparison = creationNoteState.alternatives.size == 1
+                if (noTemplateCriteriaComparison && noCandidatesComparison) {
+                    return@composable
+                }
                 val cardActions = CardActions(
-                    onArrowClick = { i, j, newRelationInfo ->
-                        viewModel.updateCreationNoteState(i, j, newRelationInfo)
+                    onPlusClick = { pageIndex, currentFirst, currentSecond, newValue ->
+                        viewModel.updateMatrixByIndex(
+                            pageIndex, currentFirst, currentSecond, newValue
+                        )
                     },
-                    onMinusClick = { i, j, newRelationInfo ->
-                        viewModel.updateCreationNoteState(i, j, newRelationInfo)
+                    onMinusClick = { pageIndex, currentFirst, currentSecond, newValue ->
+                        viewModel.updateMatrixByIndex(
+                            pageIndex, currentFirst, currentSecond, newValue
+                        )
                     },
-                    onPlusClick = { i, j, newRelationInfo ->
-                        viewModel.updateCreationNoteState(i, j, newRelationInfo)
+                    onArrowClick = { pageIndex, i, j, isInverse ->
+                        if (isInverse) {
+                            viewModel.swapValuesMatrix(pageIndex, i, j)
+                        }
+                        else {
+                            viewModel.swapValuesMatrix(pageIndex, j, i)
+                        }
+
                     }
                 )
                 CreateNoteScreen(
                     noteName = creationNoteState.noteName,
-                    relationsMassive = creationNoteState.relationList,
-                    relationCardActions = cardActions
+                    creationNoteInfo = creationNoteState,
+                    relationCardActions = cardActions,
+                    relationScale = relationScale
                 )
             }
         }

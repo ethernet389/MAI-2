@@ -2,7 +2,9 @@ package com.ethernet389.mai.ui.router
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.Engineering
 import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.LibraryAdd
@@ -26,6 +28,12 @@ enum class MaiScreen(
         navigationTitle = R.string.note,
         navigationIcon = Icons.Outlined.NavigateNext,
         fabIcon = Icons.Outlined.NavigateNext,
+        isVisibleRoute = false
+    ),
+    MaiNote(
+        navigationTitle = R.string.app_name,
+        navigationIcon = Icons.Outlined.Done,
+        fabIcon = Icons.Outlined.Done,
         isVisibleRoute = false
     )
 }
