@@ -2,6 +2,7 @@ package com.ethernet389.mai.ui.components
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,8 +24,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import com.ethernet389.mai.R
 
 
@@ -35,6 +38,7 @@ fun<T> ListGrid(
     modifier: Modifier = Modifier,
     listItem: @Composable (T) -> Unit,
     gridItem: @Composable (T) -> Unit,
+    cellMinWidth: Dp = dimensionResource(R.dimen.grid_item_min_size),
     bottomContent: @Composable () -> Unit = {}
 ) {
     if (isList) {
@@ -49,6 +53,7 @@ fun<T> ListGrid(
             items = items,
             previewItem = { gridItem(it) },
             bottomContent = bottomContent,
+            minSize = cellMinWidth,
             modifier = modifier
         )
     }
@@ -95,10 +100,11 @@ fun<T> PreviewGrid(
     items: List<T>,
     previewItem: @Composable (T) -> Unit,
     bottomContent: @Composable () -> Unit = {},
+    minSize: Dp = dimensionResource(R.dimen.grid_item_min_size),
     modifier: Modifier = Modifier
 ) {
     LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Adaptive(minSize = dimensionResource(R.dimen.grid_item_min_size)),
+        columns = StaggeredGridCells.Adaptive(minSize = minSize),
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
     ) {

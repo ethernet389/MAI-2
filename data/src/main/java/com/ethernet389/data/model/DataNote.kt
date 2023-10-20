@@ -33,14 +33,14 @@ data class DataNote(
 fun Note.toDataNote() = DataNote(
     id = id,
     name = name,
-    candidates = candidates,
+    candidates = alternatives,
     report = report,
     templateId = template.id
 )
 
 fun BaseNote.toDataNote() = DataNote(
     name = name,
-    candidates = candidates,
+    candidates = alternatives,
     report = report,
     templateId = template.id
 )

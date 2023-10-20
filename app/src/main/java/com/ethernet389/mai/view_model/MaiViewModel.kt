@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 data class Controller<Creator, Loader, Deleter>(
     val creator: Creator,
@@ -37,7 +36,7 @@ data class MaiUiState(
 val relationScale = 1.0..9.0
 
 //First Matrix Is Template Relation
-data class CreationNoteInfo(
+data class CreationNoteState(
     val noteName: String,
     val template: Template,
     val alternatives: List<String>,
@@ -85,13 +84,13 @@ data class CreationNoteInfo(
                 relationScale.start
             )
         ) +
-        List(template.criteria.size) {
-            Matrix(
-                alternatives.size,
-                alternatives.size,
-                relationScale.start
-            )
-        }
+                List(template.criteria.size) {
+                    Matrix(
+                        alternatives.size,
+                        alternatives.size,
+                        relationScale.start
+                    )
+                }
     )
 }
 
@@ -137,17 +136,17 @@ class MaiViewModel(
         }
     }
 
-    private var _creationNoteState = MutableStateFlow(CreationNoteInfo())
+    private var _creationNoteState = MutableStateFlow(CreationNoteState())
     val creationNoteState = _creationNoteState.asStateFlow()
 
-    fun postNoteFromCreationNote() {
+    fun postNoteFromCreationNoteState() {
         viewModelScope.launch {
-            val inputParameters = creationNoteState.value.toInputParameters(creationNoteState.value)
+            val inputParameters = creationNoteState.value.toInputParameters()
             val newNote = with(creationNoteState.value) {
                 BaseNote(
                     name = noteName,
                     template = template,
-                    candidates = alternatives,
+                    alternatives = alternatives,
                     report = inputParameters.encodeToString()
                 )
             }
@@ -162,7 +161,7 @@ class MaiViewModel(
         alternatives: List<String>
     ) {
         _creationNoteState.update {
-            CreationNoteInfo(
+            CreationNoteState(
                 noteName = noteName,
                 template = template,
                 alternatives = alternatives
@@ -171,41 +170,44 @@ class MaiViewModel(
     }
 
     //h - position in relation list, i - position of row, j - position of column
+    //TODO: Doesn't work with 1 criteria
     fun updateMatrixByIndex(h: Int, i: Int, j: Int, newValue: Double) {
         require(newValue in relationScale)
+
+        val index = if (creationNoteState.value.template.criteria.size == 1) h + 1 else h
         _creationNoteState.update {
             it.copy(
                 relationMatrices = it.relationMatrices
                     .apply {
-                        this[h][i, j] = newValue
-                        this[h][j, i] = 1 / newValue
+                        this[index][i, j] = newValue
+                        this[index][j, i] = 1 / newValue
                     }
             )
         }
     }
 
     fun swapValuesMatrix(h: Int, i: Int, j: Int) {
+        val index = if (creationNoteState.value.template.criteria.size == 1) h + 1 else h
         _creationNoteState.update {
             it.copy(
                 relationMatrices = it.relationMatrices
                     .apply {
-                        val temp = this[h][i, j]
-                        this[h][i, j] = this[h][j, i]
-                        this[h][j, i] = temp
+                        val temp = this[index][i, j]
+                        this[index][i, j] = this[index][j, i]
+                        this[index][j, i] = temp
                     }
             )
         }
     }
 
-    fun dropCreationNoteState() = _creationNoteState.update { CreationNoteInfo() }
+    fun dropCreationNoteState() = _creationNoteState.update { CreationNoteState() }
 }
 
-fun CreationNoteInfo.toInputParameters(noteInfo: CreationNoteInfo): InputParameters =
-    with(noteInfo) {
-        InputParameters(
-            criteriaMatrix = KMatrix(noteInfo.relationMatrices.first()),
-            candidatesMatrices = relationMatrices
-                .subList(1, relationMatrices.lastIndex)
-                .map { KMatrix(it) }
-        )
-    }
+fun CreationNoteState.toInputParameters(): InputParameters =
+    InputParameters(
+        criteriaMatrix = KMatrix(relationMatrices.first()),
+        candidatesMatrices = relationMatrices
+            .subList(1, relationMatrices.lastIndex)
+            .map { KMatrix(it) }
+    )
+

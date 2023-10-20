@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import com.ethernet389.mai.R
 import com.ethernet389.mai.ui.components.RelationCard
 import com.ethernet389.mai.ui.components.SupportScaffoldTitle
-import com.ethernet389.mai.view_model.CreationNoteInfo
+import com.ethernet389.mai.view_model.CreationNoteState
 
 data class CardActions(
     val onArrowClick: (Int, Int, Int, Boolean) -> Unit,
@@ -36,20 +36,20 @@ data class CardActions(
 @Composable
 fun CreateNoteScreen(
     noteName: String,
-    creationNoteInfo: CreationNoteInfo,
+    creationNoteState: CreationNoteState,
     relationCardActions: CardActions,
     relationScale: ClosedFloatingPointRange<Double>,
     modifier: Modifier = Modifier
 ) {
-    val noTemplateCriteriaComparison = creationNoteInfo.template.criteria.size == 1
-    val comparisonPairs = with(creationNoteInfo) {
+    val noTemplateCriteriaComparison = creationNoteState.template.criteria.size == 1
+    val comparisonPairs = with(creationNoteState) {
         when {
             noTemplateCriteriaComparison -> {
                 listOf(template.criteria.first() to relationMatrices[1])
             }
 
             alternatives.size == 1 -> {
-                listOf(template.name to relationMatrices.first())
+                    listOf(template.name to relationMatrices.first())
             }
 
             else -> {
@@ -70,9 +70,9 @@ fun CreateNoteScreen(
         ) { pageIndex ->
             val currentNameList = when {
                 pageIndex == 0 && !noTemplateCriteriaComparison ->
-                    creationNoteInfo.template.criteria
+                    creationNoteState.template.criteria
 
-                else -> creationNoteInfo.alternatives
+                else -> creationNoteState.alternatives
             }
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -87,7 +87,48 @@ fun CreateNoteScreen(
                         modifier = Modifier.padding(dimensionResource(R.dimen.medium_padding))
                     )
                 }
-                itemsIndexed(currentNameList) { i, _ ->
+                //TODO: Fix recomposition
+                for (i in currentNameList.indices) {
+                    for (j in (i + 1)..currentNameList.lastIndex) {
+                        item {
+                            var isInverse by rememberSaveable { mutableStateOf(false) }
+                            val currentIndexes = if (isInverse) j to i else i to j
+                            var currentValue by rememberSaveable {
+                                mutableDoubleStateOf(comparisonPairs[pageIndex]
+                                    .second[currentIndexes.first, currentIndexes.second])
+                            }
+                            RelationCard(
+                                firstParameter = currentNameList[i],
+                                secondParameter = currentNameList[j],
+                                isInverse = isInverse,
+                                relationValue = currentValue,
+                                onArrowClick = {
+                                    isInverse = !isInverse
+                                    relationCardActions.onArrowClick(pageIndex, i, j, isInverse)
+                                },
+                                onMinusClick = {
+                                    currentValue -= if (currentValue > relationScale.start) 1 else 0
+                                    relationCardActions.onMinusClick(
+                                        pageIndex,
+                                        currentIndexes.first,
+                                        currentIndexes.second,
+                                        currentValue
+                                    )
+                                },
+                                onPlusClick = {
+                                    currentValue += if (currentValue < relationScale.endInclusive) 1 else 0
+                                    relationCardActions.onPlusClick(
+                                        pageIndex,
+                                        currentIndexes.first,
+                                        currentIndexes.second,
+                                        currentValue
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
+                /*itemsIndexed(currentNameList) { i, _ ->
                     for (j in (i + 1)..currentNameList.lastIndex) {
                         var isInverse by rememberSaveable { mutableStateOf(false) }
                         val currentFirstIndex = if (isInverse) j else i
@@ -121,7 +162,7 @@ fun CreateNoteScreen(
                             }
                         )
                     }
-                }
+                }*/
             }
         }
     }

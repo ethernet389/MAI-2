@@ -65,7 +65,7 @@ private fun TemplateListGridItem(
     isList: Boolean = true
 ) {
     val expandedCriteria = with(template.criteria) {
-        val prefix = if (size > 1) { "1 ." } else ""
+        val prefix = if (size > 1) { "1. " } else ""
         prefix + reduceIndexed { index, acc, item ->
             acc + "\n${index + 1}. $item"
         }

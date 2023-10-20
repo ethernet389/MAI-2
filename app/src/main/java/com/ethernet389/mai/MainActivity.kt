@@ -23,10 +23,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.ethernet389.mai.ui.components.AppFloatingActionButton
 import com.ethernet389.mai.ui.components.NavigationBottomBar
 import com.ethernet389.mai.ui.components.NoteCreationDialog
@@ -37,6 +39,7 @@ import com.ethernet389.mai.ui.screens.CardActions
 import com.ethernet389.mai.ui.screens.CreateNoteScreen
 import com.ethernet389.mai.ui.screens.InfoScreen
 import com.ethernet389.mai.ui.screens.NotesScreen
+import com.ethernet389.mai.ui.screens.ResultScreen
 import com.ethernet389.mai.ui.screens.SettingsScreen
 import com.ethernet389.mai.ui.screens.TemplatesScreen
 import com.ethernet389.mai.ui.theme.MAITheme
@@ -131,7 +134,9 @@ fun MaiApp(
                     when (currentScreen) {
                         MaiScreen.Notes, MaiScreen.Templates -> showCreationDialog = true
                         MaiScreen.CreateNotes -> {
+                            viewModel.postNoteFromCreationNoteState()
                             viewModel.dropCreationNoteState()
+                            navController.navigate(route = MaiScreen.Notes.name)
                         }
 
                         else -> {}
@@ -147,7 +152,10 @@ fun MaiApp(
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(route = MaiScreen.Notes.name) {
-                NotesScreen(notes = uiState.notes, isList = listOn)
+                NotesScreen(
+                    notes = uiState.notes,
+                    isList = listOn
+                )
                 if (showCreationDialog) {
                     NoteCreationDialog(
                         onDismissRequest = { showCreationDialog = false },
@@ -210,10 +218,18 @@ fun MaiApp(
                 )
                 CreateNoteScreen(
                     noteName = creationNoteState.noteName,
-                    creationNoteInfo = creationNoteState,
+                    creationNoteState = creationNoteState,
                     relationCardActions = cardActions,
                     relationScale = relationScale
                 )
+            }
+            composable(
+                route = "${MaiScreen.Result.name}/{note_id}",
+                arguments = listOf(navArgument("note_id") { type =  NavType.LongType})
+            ) { backStackEntry ->
+                val noteId = backStackEntry.arguments?.getLong("note_id")!!
+                val note = uiState.notes.find { note -> noteId == note.id }!!
+                ResultScreen(note = note)
             }
         }
     }
