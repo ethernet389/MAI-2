@@ -17,10 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -30,9 +34,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ethernet389.mai.ui.components.AppFloatingActionButton
 import com.ethernet389.mai.ui.components.NavigationBottomBar
-import com.ethernet389.mai.ui.components.NoteCreationDialog
-import com.ethernet389.mai.ui.components.TemplateCreationDialog
+import com.ethernet389.mai.ui.components.dialogs.NoteCreationDialog
+import com.ethernet389.mai.ui.components.dialogs.TemplateCreationDialog
 import com.ethernet389.mai.ui.components.TitleAppBar
+import com.ethernet389.mai.ui.components.dialogs.ConfirmationDeletionDialog
 import com.ethernet389.mai.ui.router.MaiScreen
 import com.ethernet389.mai.ui.screens.CardActions
 import com.ethernet389.mai.ui.screens.CreateNoteScreen
@@ -42,6 +47,7 @@ import com.ethernet389.mai.ui.screens.ResultScreen
 import com.ethernet389.mai.ui.screens.SettingsScreen
 import com.ethernet389.mai.ui.screens.TemplatesScreen
 import com.ethernet389.mai.ui.theme.MAITheme
+import com.ethernet389.mai.util.spannableStringToAnnotatedString
 import com.ethernet389.mai.view_model.MaiViewModel
 import com.ethernet389.mai.view_model.relationScale
 import org.koin.androidx.compose.koinViewModel
@@ -92,13 +98,11 @@ fun MaiApp(
         .enterAlwaysScrollBehavior(rememberTopAppBarState())
 
     //List or Grid view
-    var listOn by rememberSaveable {
-        mutableStateOf(true)
-    }
+    var listOn by rememberSaveable { mutableStateOf(true) }
     //Note/Template creation dialog
-    var showCreationDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
+    var showCreationDialog by rememberSaveable { mutableStateOf(false) }
+    //Confirm deletion dialog
+    var showDeletionDialog by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -187,11 +191,49 @@ fun MaiApp(
                 }
             }
             composable(route = MaiScreen.Settings.name) {
+                val resources = LocalContext.current.resources
+                val density = LocalDensity.current
+
+                var text by remember {
+                    mutableStateOf(AnnotatedString(""))
+                }
+                var lambda by remember {
+                    mutableStateOf({})
+                }
+                val updateAndShow = { id: Int, func: () -> Unit ->
+                    text = spannableStringToAnnotatedString(
+                        resources.getText(id),
+                        density
+                    )
+                    lambda = func
+                    showDeletionDialog = true
+                }
                 SettingsScreen(
-                    onDeleteNotesClick = { viewModel.deleteAllNotes() },
-                    onDeleteUnusedTemplatesClick = { viewModel.deleteUnusedTemplates() },
-                    onClearAllDatabaseClick = { viewModel.clearAllData() }
+                    onDeleteNotesClick = {
+                        updateAndShow(R.string.delete_all_notes_warning) {
+                            viewModel.deleteAllNotes()
+                        }
+                    },
+                    onDeleteUnusedTemplatesClick = {
+                        updateAndShow(R.string.delete_all_unused_template_warning)
+                        { viewModel.deleteUnusedTemplates() }
+                    },
+                    onClearAllDatabaseClick = {
+                        updateAndShow(R.string.delete_all_data_warning) {
+                            viewModel.clearAllData()
+                        }
+                    }
                 )
+                if (showDeletionDialog) {
+                    ConfirmationDeletionDialog(
+                        onDismissRequest = { showDeletionDialog = false },
+                        onConfirmRequest = {
+                            lambda()
+                            showDeletionDialog = false
+                        },
+                        text = text
+                    )
+                }
             }
             composable(route = MaiScreen.Information.name) { InfoScreen() }
             composable(route = MaiScreen.CreateNotes.name) {
@@ -214,8 +256,7 @@ fun MaiApp(
                     onArrowClick = { pageIndex, i, j, isInverse ->
                         if (isInverse) {
                             viewModel.swapValuesMatrix(pageIndex, i, j)
-                        }
-                        else {
+                        } else {
                             viewModel.swapValuesMatrix(pageIndex, j, i)
                         }
 
@@ -230,7 +271,7 @@ fun MaiApp(
             }
             composable(
                 route = "${MaiScreen.Result.name}/{note_id}",
-                arguments = listOf(navArgument("note_id") { type =  NavType.LongType})
+                arguments = listOf(navArgument("note_id") { type = NavType.LongType })
             ) { backStackEntry ->
                 val noteId = backStackEntry.arguments?.getLong("note_id")!!
                 val note = uiState.notes.find { note -> noteId == note.id }!!

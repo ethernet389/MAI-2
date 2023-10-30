@@ -29,10 +29,17 @@
     <string name="delete_unused_templates">Удалить неиспользуемые шаблоны</string>
     <string name="delete_notes">Удалить записи</string>
 
-    <!-- Creation Form -->
+    <!-- Dialogs -->
     <string name="cancel">Отменить</string>
     <string name="create">Создать</string>
+    <string name="go">Продолжить</string>
     <string name="name">Название</string>
+
+    <!-- Deletion Dialogs -->
+    <string name="need_confirmation">Требуется подтверждение</string>
+    <string name="delete_all_notes_warning">Вы уверены, что хотите удалить\n <b>все записи</b>?</string>
+    <string name="delete_all_data_warning">Вы уверены, что хотите удалить\n <b>все данные</b>?</string>
+    <string name="delete_all_unused_template_warning">Вы уверены, что хотите удалить\n <b>все неиспользуемые шаблоны</b>?</string>
 
     <!-- Creation Error Messages -->
     <string name="empty_fields_error">Поля не заполнены!</string>
