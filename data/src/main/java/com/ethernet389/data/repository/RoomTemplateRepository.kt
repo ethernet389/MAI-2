@@ -30,4 +30,10 @@ class RoomTemplateRepository(
             return@withContext templateDao.getAllTemplates().map(DataTemplate::toTemplate)
         }
     }
+
+    override suspend fun deleteUnusedTemplate() {
+        return withContext(Dispatchers.IO) {
+            templateDao.deleteUnusedTemplates()
+        }
+    }
 }

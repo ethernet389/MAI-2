@@ -14,12 +14,23 @@ interface TemplateDao {
     @Insert
     fun insertTemplates(dataTemplates: List<DataTemplate>): List<Long>
 
-    @Query("SELECT * FROM templates")
+    @Query("SELECT * FROM templates;")
     fun getAllTemplates(): List<DataTemplate>
 
     @Delete
     fun deleteTemplate(template: DataTemplate): Int
 
-    @Query("SELECT * FROM templates WHERE id = :id")
+    @Query("SELECT * FROM templates WHERE id = :id;")
     fun getTemplateById(id: Long): DataTemplate
+
+    @Query(
+        """
+        DELETE FROM templates
+        WHERE
+            (SELECT COUNT(notes.template_id)
+            FROM notes
+            WHERE templates.id = notes.template_id) = 0;
+        """
+    )
+    fun deleteUnusedTemplates()
 }

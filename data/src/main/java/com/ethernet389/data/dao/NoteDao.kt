@@ -12,9 +12,12 @@ interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertNote(dataNote: DataNote): Long
 
-    @Query("SELECT * FROM notes")
+    @Query("SELECT * FROM notes;")
     fun getAllNotes(): List<DataNote>
 
     @Delete
     fun deleteNote(note: DataNote): Int
+
+    @Query("DELETE FROM notes;")
+    fun deleteAllNotes()
 }

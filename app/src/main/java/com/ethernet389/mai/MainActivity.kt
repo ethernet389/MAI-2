@@ -1,7 +1,6 @@
 package com.ethernet389.mai
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -187,7 +186,13 @@ fun MaiApp(
                     )
                 }
             }
-            composable(route = MaiScreen.Settings.name) { SettingsScreen() }
+            composable(route = MaiScreen.Settings.name) {
+                SettingsScreen(
+                    onDeleteNotesClick = { viewModel.deleteAllNotes() },
+                    onDeleteUnusedTemplatesClick = { viewModel.deleteUnusedTemplates() },
+                    onClearAllDatabaseClick = { viewModel.clearAllData() }
+                )
+            }
             composable(route = MaiScreen.Information.name) { InfoScreen() }
             composable(route = MaiScreen.CreateNotes.name) {
                 val noTemplateCriteriaComparison = creationNoteState.template.criteria.size == 1

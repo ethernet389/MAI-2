@@ -23,6 +23,12 @@
     <string name="alternatives">Альтернативы</string>
     <string name="alternatives_example">Куртка, Рубашка, Футболка…</string>
 
+    <!-- Settings -->
+    <string name="database">База данных</string>
+    <string name="clear_all_data">Очистить базу данных</string>
+    <string name="delete_unused_templates">Удалить неиспользуемые шаблоны</string>
+    <string name="delete_notes">Удалить записи</string>
+
     <!-- Creation Form -->
     <string name="cancel">Отменить</string>
     <string name="create">Создать</string>

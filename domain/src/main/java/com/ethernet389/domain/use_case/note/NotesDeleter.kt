@@ -9,4 +9,8 @@ class NotesDeleter(
     suspend fun deleteNote(note: Note): Boolean {
         return noteRepository.deleteNote(note)
     }
+
+    suspend fun deleteAllNotes() {
+        return noteRepository.deleteAllNotes()
+    }
 }

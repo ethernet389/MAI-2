@@ -9,4 +9,8 @@ class TemplatesDeleter(
     suspend fun deleteTemplate(template: Template): Boolean {
         return templateRepository.deleteTemplate(template)
     }
+
+    suspend fun deleteUnusedTemplates() {
+        return templateRepository.deleteUnusedTemplate()
+    }
 }

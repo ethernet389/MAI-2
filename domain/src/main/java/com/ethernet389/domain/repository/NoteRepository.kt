@@ -7,4 +7,5 @@ interface NoteRepository {
     suspend fun deleteNote(note: Note): Boolean
     suspend fun createNote(note: BaseNote): Boolean
     suspend fun getNotes(): List<Note>
+    suspend fun deleteAllNotes()
 }

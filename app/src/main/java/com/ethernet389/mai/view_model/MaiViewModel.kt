@@ -136,6 +136,26 @@ class MaiViewModel(
         }
     }
 
+    fun deleteAllNotes() {
+        viewModelScope.launch {
+            noteController.deleter.deleteAllNotes()
+            updateNotes()
+        }
+    }
+    fun deleteUnusedTemplates() {
+        viewModelScope.launch {
+            templateController.deleter.deleteUnusedTemplates()
+            updateTemplates()
+        }
+    }
+
+    fun clearAllData() {
+        viewModelScope.launch {
+            deleteAllNotes()
+            deleteUnusedTemplates()
+        }
+    }
+
     private var _creationNoteState = MutableStateFlow(CreationNoteState())
     val creationNoteState = _creationNoteState.asStateFlow()
 
@@ -207,7 +227,7 @@ fun CreationNoteState.toInputParameters(): InputParameters =
     InputParameters(
         criteriaMatrix = KMatrix(relationMatrices.first()),
         candidatesMatrices = relationMatrices
-            .subList(1, relationMatrices.lastIndex)
+            .subList(1, relationMatrices.size)
             .map { KMatrix(it) }
     )
 

@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -113,7 +114,9 @@ fun TemplateCreationDialog(
                         .padding(5.dp)
                         .height(50.dp)
                 ) {
-                    OutlinedButton(onClick = onDismissRequest) {
+                    OutlinedButton(
+                        onClick = onDismissRequest,
+                    ) {
                         Text(text = stringResource(R.string.cancel))
                     }
                     Spacer(modifier = Modifier.width(10.dp))
@@ -126,7 +129,7 @@ fun TemplateCreationDialog(
                             isNameError = name.isBlank()
                             if (isNameError || isOptionsError) return@Button
                             onCreateRequest(Template(name = name, criteria = criteria))
-                        }
+                        },
                     ) {
                         Text(text = stringResource(R.string.create))
                     }

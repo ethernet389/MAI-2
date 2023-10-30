@@ -45,4 +45,10 @@ class RoomNoteRepository(
             return@withContext notes
         }
     }
+
+    override suspend fun deleteAllNotes() {
+        return withContext(Dispatchers.IO) {
+            noteDao.deleteAllNotes()
+        }
+    }
 }
