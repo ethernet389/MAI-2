@@ -136,6 +136,20 @@ class MaiViewModel(
         }
     }
 
+    fun deleteNote(note: Note) {
+        viewModelScope.launch {
+            noteController.deleter.deleteNote(note)
+            updateNotes()
+        }
+    }
+
+    fun deleteTemplate(template: Template) {
+        viewModelScope.launch {
+            templateController.deleter.deleteTemplate(template)
+            updateData()
+        }
+    }
+
     fun deleteAllNotes() {
         viewModelScope.launch {
             noteController.deleter.deleteAllNotes()

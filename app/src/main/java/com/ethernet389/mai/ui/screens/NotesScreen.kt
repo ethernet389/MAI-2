@@ -27,6 +27,7 @@ import com.ethernet389.mai.ui.components.TextBody
 fun NotesScreen(
     notes: List<Note>,
     isList: Boolean = true,
+    onDeleteClick: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -38,7 +39,8 @@ fun NotesScreen(
         NoteListGrid(
             isList = isList,
             notes = notes,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            onDeleteClick = onDeleteClick
         )
     }
 
@@ -48,6 +50,7 @@ fun NotesScreen(
 private fun NoteListGrid(
     isList: Boolean,
     notes: List<Note>,
+    onDeleteClick: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
     ListGrid(
@@ -57,13 +60,15 @@ private fun NoteListGrid(
         listItem = { note ->
             NoteListGridItem(
                 note = note,
-                isList = true
+                isList = true,
+                onDeleteClick = onDeleteClick
             )
         },
         gridItem = { note ->
             NoteListGridItem(
                 note = note,
-                isList = false
+                isList = false,
+                onDeleteClick = onDeleteClick
             )
         },
         bottomContent = {
@@ -78,6 +83,7 @@ private fun NoteListGrid(
 private fun NoteListGridItem(
     note: Note,
     isList: Boolean,
+    onDeleteClick: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val prefix = if (note.alternatives.size > 1) {
@@ -114,6 +120,7 @@ private fun NoteListGridItem(
             },
             foldedBody = foldedTemplateAndAlternatives
         ),
+        onDeleteClick = { onDeleteClick(note) },
         modifier = modifier
     )
 }

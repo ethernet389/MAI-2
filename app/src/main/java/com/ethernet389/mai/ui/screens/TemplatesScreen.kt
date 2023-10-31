@@ -21,6 +21,7 @@ import com.ethernet389.mai.ui.components.TextBody
 fun TemplatesScreen(
     templates: List<Template>,
     isList: Boolean = true,
+    onDeleteClick: (Template) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -29,13 +30,14 @@ fun TemplatesScreen(
     ) {
         SupportScaffoldTitle(text = stringResource(R.string.templates))
         Divider(thickness = 1.dp)
-        TemplateListGrid(isList = isList, templates = templates, modifier = Modifier.fillMaxSize())
+        TemplateListGrid(isList = isList, onDeleteClick = onDeleteClick, templates = templates, modifier = Modifier.fillMaxSize())
     }
 }
 
 @Composable
 private fun TemplateListGrid(
     isList: Boolean,
+    onDeleteClick: (Template) -> Unit,
     templates: List<Template>,
     modifier: Modifier = Modifier
 ) {
@@ -44,10 +46,10 @@ private fun TemplateListGrid(
         isList = isList,
         items = templates,
         listItem = { template ->
-            TemplateListGridItem(template = template, isList = true)
+            TemplateListGridItem(template = template, isList = true, onDeleteClick = onDeleteClick)
         },
         gridItem = { template ->
-            TemplateListGridItem(template = template, isList = false)
+            TemplateListGridItem(template = template, isList = false, onDeleteClick = onDeleteClick)
         },
         bottomContent = {
             Spacer(
@@ -62,6 +64,7 @@ private fun TemplateListGrid(
 private fun TemplateListGridItem(
     template: Template,
     modifier: Modifier = Modifier,
+    onDeleteClick: (Template) -> Unit,
     isList: Boolean = true
 ) {
     val expandedCriteria = with(template.criteria) {
@@ -81,6 +84,7 @@ private fun TemplateListGridItem(
     ListGridItem(
         title = template.name,
         body = TextBody(expandedBody = expandedCriteria, foldedBody = foldedCriteria),
+        onDeleteClick = { onDeleteClick(template) },
         modifier = modifier
     )
 }

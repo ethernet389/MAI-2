@@ -39,6 +39,8 @@
     <string name="delete_all_notes_warning">Are you sure you want to delete\n <b>all notes</b>?</string>
     <string name="delete_all_data_warning">Are you sure you want to delete\n <b>all data</b>?</string>
     <string name="delete_all_unused_template_warning">Are you sure you want to delete\n <b>all unused templates</b>?</string>
+    <string name="delete_template_warning">Are you sure you want to delete\n <b>template and all linked with him notes</b>?</string>
+    <string name="delete_note_warning">Are you sure you want to delete\n <b>note</b>?</string>
 
     <!-- Creation Error Messages -->
     <string name="empty_fields_error">Fields aren\'t filled in!</string>

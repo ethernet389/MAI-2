@@ -40,6 +40,8 @@
     <string name="delete_all_notes_warning">Вы уверены, что хотите удалить\n <b>все записи</b>?</string>
     <string name="delete_all_data_warning">Вы уверены, что хотите удалить\n <b>все данные</b>?</string>
     <string name="delete_all_unused_template_warning">Вы уверены, что хотите удалить\n <b>все неиспользуемые шаблоны</b>?</string>
+    <string name="delete_template_warning">Вы уверены, что хотите удалить\n <b>шаблон и все связанные с ним записи</b>?</string>
+    <string name="delete_note_warning">Вы уверены, что хотите удалить\n <b>запись</b>?</string>
 
     <!-- Creation Error Messages -->
     <string name="empty_fields_error">Поля не заполнены!</string>

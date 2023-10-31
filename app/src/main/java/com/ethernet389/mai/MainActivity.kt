@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -47,6 +48,7 @@ import com.ethernet389.mai.ui.screens.ResultScreen
 import com.ethernet389.mai.ui.screens.SettingsScreen
 import com.ethernet389.mai.ui.screens.TemplatesScreen
 import com.ethernet389.mai.ui.theme.MAITheme
+import com.ethernet389.mai.util.annotatedStringResource
 import com.ethernet389.mai.util.spannableStringToAnnotatedString
 import com.ethernet389.mai.view_model.MaiViewModel
 import com.ethernet389.mai.view_model.relationScale
@@ -79,6 +81,10 @@ fun MaiApp(
     //UI state and current creation note state
     val uiState by viewModel.uiStateFlow.collectAsState()
     val creationNoteState by viewModel.creationNoteState.collectAsState()
+
+    //Annotated string resources
+    val resources = LocalContext.current.resources
+    val density = LocalDensity.current
 
     //Current navigation screen
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -155,11 +161,26 @@ fun MaiApp(
             modifier = Modifier.padding(paddingValues)
         ) {
             composable(route = MaiScreen.Notes.name) {
+                var lambda by remember { mutableStateOf({}) }
                 NotesScreen(
                     notes = uiState.notes,
-                    isList = listOn
+                    isList = listOn,
+                    onDeleteClick = { note ->
+                        lambda = { viewModel.deleteNote(note) }
+                        showDeletionDialog = true
+                    }
                 )
-                if (showCreationDialog) {
+                if (showDeletionDialog) {
+                    ConfirmationDeletionDialog(
+                        onDismissRequest = { showDeletionDialog = false },
+                        onConfirmRequest = {
+                            lambda()
+                            showDeletionDialog = false
+                        },
+                        text = annotatedStringResource(R.string.delete_note_warning)
+                    )
+                }
+                else if (showCreationDialog) {
                     NoteCreationDialog(
                         onDismissRequest = { showCreationDialog = false },
                         onCreateRequest = { noteName, chosenTemplate, alternatives ->
@@ -178,8 +199,26 @@ fun MaiApp(
                 }
             }
             composable(route = MaiScreen.Templates.name) {
-                TemplatesScreen(templates = uiState.templates, isList = listOn)
-                if (showCreationDialog) {
+                var lambda by remember { mutableStateOf({}) }
+                TemplatesScreen(
+                    templates = uiState.templates,
+                    isList = listOn,
+                    onDeleteClick = { template ->
+                        lambda = { viewModel.deleteTemplate(template) }
+                        showDeletionDialog = true
+                    }
+                )
+                if (showDeletionDialog) {
+                    ConfirmationDeletionDialog(
+                        onDismissRequest = { showDeletionDialog = false },
+                        onConfirmRequest = {
+                            lambda()
+                            showDeletionDialog = false
+                        },
+                        text = annotatedStringResource(R.string.delete_template_warning)
+                    )
+                }
+                else if (showCreationDialog) {
                     TemplateCreationDialog(
                         onDismissRequest = { showCreationDialog = false },
                         onCreateRequest = { newTemplate ->
@@ -191,9 +230,6 @@ fun MaiApp(
                 }
             }
             composable(route = MaiScreen.Settings.name) {
-                val resources = LocalContext.current.resources
-                val density = LocalDensity.current
-
                 var text by remember {
                     mutableStateOf(AnnotatedString(""))
                 }
@@ -215,8 +251,9 @@ fun MaiApp(
                         }
                     },
                     onDeleteUnusedTemplatesClick = {
-                        updateAndShow(R.string.delete_all_unused_template_warning)
-                        { viewModel.deleteUnusedTemplates() }
+                        updateAndShow(R.string.delete_all_unused_template_warning) {
+                            viewModel.deleteUnusedTemplates()
+                        }
                     },
                     onClearAllDatabaseClick = {
                         updateAndShow(R.string.delete_all_data_warning) {

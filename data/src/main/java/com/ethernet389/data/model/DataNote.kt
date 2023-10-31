@@ -19,7 +19,7 @@ import kotlinx.serialization.Serializable
         entity = DataTemplate::class,
         parentColumns = ["id"],
         childColumns = ["template_id"],
-        onDelete = ForeignKey.RESTRICT
+        onDelete = ForeignKey.CASCADE
     )]
 )
 data class DataNote(
