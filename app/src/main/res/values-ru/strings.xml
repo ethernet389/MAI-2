@@ -7,6 +7,8 @@
     <string name="templates">Шаблоны</string>
     <string name="settings">Настройки</string>
     <string name="info">Инфо</string>
+    <string name="result">Результат</string>
+    <string name="create_note">Создание записи</string>
 
     <!-- List/Grid Switch content description -->
     <string name="list_switch">Переключатель вида на список/сетку</string>
@@ -89,4 +91,5 @@
         <item>https://github.com/ethernet389/Solve-on-Java/blob/main/docs/saaty.pdf</item>
     </string-array>
 
+    <string name="_null">Null</string>
 </resources>

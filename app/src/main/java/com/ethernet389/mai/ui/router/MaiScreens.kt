@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.NoteAdd
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.ethernet389.mai.R
 
+//Each name doesn't contains other name
 enum class MaiScreen(
     @StringRes val navigationTitle: Int,
     val navigationIcon: ImageVector,
@@ -23,14 +24,14 @@ enum class MaiScreen(
     Templates(R.string.templates, Icons.Outlined.LibraryBooks, Icons.Outlined.LibraryAdd),
     Settings(R.string.settings, Icons.Outlined.Engineering),
     Information(R.string.info, Icons.Outlined.HelpOutline),
-    CreateNotes(
-        navigationTitle = R.string.note,
+    CreateNote(
+        navigationTitle = R.string.create_note,
         navigationIcon = Icons.Outlined.NavigateNext,
         fabIcon = Icons.Outlined.NavigateNext,
         isVisibleRoute = false
     ),
     Result(
-        navigationTitle = R.string.app_name,
+        navigationTitle = R.string.result,
         navigationIcon = Icons.Outlined.Done,
         fabIcon = Icons.Outlined.Done,
         isVisibleRoute = false

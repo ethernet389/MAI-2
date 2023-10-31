@@ -93,14 +93,14 @@ fun MaiApp(
     val currentDestination = backStackEntry?.destination
     val screenArray = MaiScreen.values()
     val currentScreen = screenArray.find {
-        currentDestination?.route == it.name
+        currentDestination?.route?.contains(it.name) ?: false
     }
     val fabVisible = currentScreen?.fabIcon != null
     val listGridSwitchVisible = when (currentScreen) {
         MaiScreen.Templates, MaiScreen.Notes -> true
         else -> false
     }
-    val supportScaffoldTitle = stringResource(currentScreen?.navigationTitle ?: androidx.compose.ui.R.string.default_error_message)
+    val supportScaffoldTitle = stringResource(currentScreen?.navigationTitle ?: R.string._null)
 
     //Folded scroll behavior
     val scrollBehavior = TopAppBarDefaults
@@ -148,7 +148,7 @@ fun MaiApp(
                 onClick = {
                     when (currentScreen) {
                         MaiScreen.Notes, MaiScreen.Templates -> showCreationDialog = true
-                        MaiScreen.CreateNotes -> {
+                        MaiScreen.CreateNote -> {
                             viewModel.postNoteFromCreationNoteState()
                             viewModel.dropCreationNoteState()
                             navController.navigate(route = MaiScreen.Notes.name)
@@ -188,8 +188,7 @@ fun MaiApp(
                         },
                         text = annotatedStringResource(R.string.delete_note_warning)
                     )
-                }
-                else if (showCreationDialog) {
+                } else if (showCreationDialog) {
                     NoteCreationDialog(
                         onDismissRequest = { showCreationDialog = false },
                         onCreateRequest = { noteName, chosenTemplate, alternatives ->
@@ -199,7 +198,7 @@ fun MaiApp(
                                 return@NoteCreationDialog
                             }
                             viewModel.createNewCreationNoteState(noteName, template, alternatives)
-                            navController.navigate(MaiScreen.CreateNotes.name)
+                            navController.navigate(MaiScreen.CreateNote.name)
                             showCreationDialog = false
                         },
                         templates = uiState.templates,
@@ -226,8 +225,7 @@ fun MaiApp(
                         },
                         text = annotatedStringResource(R.string.delete_template_warning)
                     )
-                }
-                else if (showCreationDialog) {
+                } else if (showCreationDialog) {
                     TemplateCreationDialog(
                         onDismissRequest = { showCreationDialog = false },
                         onCreateRequest = { newTemplate ->
@@ -282,7 +280,7 @@ fun MaiApp(
                 }
             }
             composable(route = MaiScreen.Information.name) { InfoScreen() }
-            composable(route = MaiScreen.CreateNotes.name) {
+            composable(route = MaiScreen.CreateNote.name) {
                 val noTemplateCriteriaComparison = creationNoteState.template.criteria.size == 1
                 val noCandidatesComparison = creationNoteState.alternatives.size == 1
                 if (noTemplateCriteriaComparison && noCandidatesComparison) {

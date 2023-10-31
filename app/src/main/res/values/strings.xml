@@ -6,6 +6,8 @@
     <string name="templates">Templates</string>
     <string name="settings">Settings</string>
     <string name="info">Info</string>
+    <string name="result">Result</string>
+    <string name="create_note">Note\'s creation</string>
 
     <!-- List/Grid Switch content description -->
     <string name="list_switch">List/Grid Switcher</string>
@@ -76,7 +78,6 @@
         The sequence is observed.
     </string>
     <string name="literature">Literature</string>
-
     <string-array name="literature_names">
         <item><u>Таха. Теория игр и принятия решений</u></item>
         <item><u>Лекция 1. Метод анализа иерархий (метод Т.Л. Саати)</u></item>
@@ -87,4 +88,6 @@
         <item>https://github.com/ethernet389/Solve-on-Java/blob/main/docs/lec1_is-2_2020%20(1).pdf</item>
         <item>https://github.com/ethernet389/Solve-on-Java/blob/main/docs/saaty.pdf</item>
     </string-array>
+
+    <string name="_null">Null</string>
 </resources>
