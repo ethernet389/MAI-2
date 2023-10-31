@@ -3,6 +3,7 @@ package com.ethernet389.mai
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -35,10 +36,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ethernet389.mai.ui.components.AppFloatingActionButton
 import com.ethernet389.mai.ui.components.NavigationBottomBar
-import com.ethernet389.mai.ui.components.dialogs.NoteCreationDialog
-import com.ethernet389.mai.ui.components.dialogs.TemplateCreationDialog
+import com.ethernet389.mai.ui.components.SupportScaffoldTitle
 import com.ethernet389.mai.ui.components.TitleAppBar
 import com.ethernet389.mai.ui.components.dialogs.ConfirmationDeletionDialog
+import com.ethernet389.mai.ui.components.dialogs.NoteCreationDialog
+import com.ethernet389.mai.ui.components.dialogs.TemplateCreationDialog
 import com.ethernet389.mai.ui.router.MaiScreen
 import com.ethernet389.mai.ui.screens.CardActions
 import com.ethernet389.mai.ui.screens.CreateNoteScreen
@@ -98,6 +100,7 @@ fun MaiApp(
         MaiScreen.Templates, MaiScreen.Notes -> true
         else -> false
     }
+    val supportScaffoldTitle = stringResource(currentScreen?.navigationTitle ?: androidx.compose.ui.R.string.default_error_message)
 
     //Folded scroll behavior
     val scrollBehavior = TopAppBarDefaults
@@ -112,19 +115,22 @@ fun MaiApp(
 
     Scaffold(
         topBar = {
-            TitleAppBar(
-                scrollBehavior = scrollBehavior,
-                colors = TopAppBarDefaults
-                    .centerAlignedTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        titleContentColor = MaterialTheme.colorScheme.onTertiaryContainer
-                    ),
-                listGridSwitchVisible = listGridSwitchVisible,
-                listOn = listOn,
-                onListGridSwitchClick = {
-                    listOn = !listOn
-                }
-            )
+            Column {
+                TitleAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = TopAppBarDefaults
+                        .centerAlignedTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            titleContentColor = MaterialTheme.colorScheme.onTertiaryContainer
+                        ),
+                    listGridSwitchVisible = listGridSwitchVisible,
+                    listOn = listOn,
+                    onListGridSwitchClick = {
+                        listOn = !listOn
+                    }
+                )
+                SupportScaffoldTitle(text = supportScaffoldTitle)
+            }
         },
         bottomBar = {
             NavigationBottomBar(
@@ -303,7 +309,6 @@ fun MaiApp(
                     }
                 )
                 CreateNoteScreen(
-                    noteName = creationNoteState.noteName,
                     creationNoteState = creationNoteState,
                     relationCardActions = cardActions,
                     relationScale = relationScale

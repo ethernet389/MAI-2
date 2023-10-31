@@ -1,26 +1,16 @@
 package com.ethernet389.mai.ui.screens
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ethernet389.domain.model.note.Note
 import com.ethernet389.mai.R
 import com.ethernet389.mai.ui.components.ListGrid
 import com.ethernet389.mai.ui.components.ListGridItem
-import com.ethernet389.mai.ui.components.PreviewGrid
-import com.ethernet389.mai.ui.components.PreviewList
-import com.ethernet389.mai.ui.components.SupportScaffoldTitle
 import com.ethernet389.mai.ui.components.TextBody
 
 @Composable
@@ -31,21 +21,14 @@ fun NotesScreen(
     onShowClick: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Divider(thickness = 1.dp)
+    NoteListGrid(
+        isList = isList,
+        notes = notes,
+        onDeleteClick = onDeleteClick,
+        onShowClick = onShowClick,
         modifier = modifier
-    ) {
-        SupportScaffoldTitle(text = stringResource(R.string.notes))
-        Divider(thickness = 1.dp)
-        NoteListGrid(
-            isList = isList,
-            notes = notes,
-            modifier = Modifier.fillMaxSize(),
-            onDeleteClick = onDeleteClick,
-            onShowClick = onShowClick
-        )
-    }
-
+    )
 }
 
 @Composable

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
@@ -21,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.ethernet389.mai.R
-import com.ethernet389.mai.ui.components.SupportScaffoldTitle
 
 @Composable
 fun SettingsScreen(
@@ -30,18 +28,14 @@ fun SettingsScreen(
     onDeleteUnusedTemplatesClick: () -> Unit,
     onClearAllDatabaseClick: () -> Unit
 ) {
-    Column {
-        SupportScaffoldTitle(
-            text = stringResource(R.string.settings)
-        )
-        OperationsCard(
-            onDeleteNotesClick = onDeleteNotesClick,
-            onDeleteUnusedTemplatesClick = onDeleteUnusedTemplatesClick,
-            onClearAllDatabaseClick = onClearAllDatabaseClick,
-            modifier = modifier.fillMaxWidth()
-        )
-    }
+    OperationsCard(
+        onDeleteNotesClick = onDeleteNotesClick,
+        onDeleteUnusedTemplatesClick = onDeleteUnusedTemplatesClick,
+        onClearAllDatabaseClick = onClearAllDatabaseClick,
+        modifier = modifier
+    )
 }
+
 
 @Composable
 private fun OperationsCard(
