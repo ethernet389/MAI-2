@@ -28,6 +28,7 @@ fun NotesScreen(
     notes: List<Note>,
     isList: Boolean = true,
     onDeleteClick: (Note) -> Unit,
+    onShowClick: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -40,7 +41,8 @@ fun NotesScreen(
             isList = isList,
             notes = notes,
             modifier = Modifier.fillMaxSize(),
-            onDeleteClick = onDeleteClick
+            onDeleteClick = onDeleteClick,
+            onShowClick = onShowClick
         )
     }
 
@@ -51,6 +53,7 @@ private fun NoteListGrid(
     isList: Boolean,
     notes: List<Note>,
     onDeleteClick: (Note) -> Unit,
+    onShowClick: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
     ListGrid(
@@ -61,14 +64,16 @@ private fun NoteListGrid(
             NoteListGridItem(
                 note = note,
                 isList = true,
-                onDeleteClick = onDeleteClick
+                onDeleteClick = onDeleteClick,
+                onShowClick = onShowClick
             )
         },
         gridItem = { note ->
             NoteListGridItem(
                 note = note,
                 isList = false,
-                onDeleteClick = onDeleteClick
+                onDeleteClick = onDeleteClick,
+                onShowClick = onShowClick
             )
         },
         bottomContent = {
@@ -84,6 +89,7 @@ private fun NoteListGridItem(
     note: Note,
     isList: Boolean,
     onDeleteClick: (Note) -> Unit,
+    onShowClick: (Note) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val prefix = if (note.alternatives.size > 1) {
@@ -121,6 +127,7 @@ private fun NoteListGridItem(
             foldedBody = foldedTemplateAndAlternatives
         ),
         onDeleteClick = { onDeleteClick(note) },
+        onShowClick = { onShowClick(note) },
         modifier = modifier
     )
 }

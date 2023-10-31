@@ -168,6 +168,9 @@ fun MaiApp(
                     onDeleteClick = { note ->
                         lambda = { viewModel.deleteNote(note) }
                         showDeletionDialog = true
+                    },
+                    onShowClick = { note ->
+                        navController.navigate(route = "${MaiScreen.Result.name}/${note.id}")
                     }
                 )
                 if (showDeletionDialog) {

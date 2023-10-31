@@ -13,6 +13,8 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,6 +25,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -73,14 +76,56 @@ fun <T> ListGrid(
     }
 }
 
-data class TextBody(val expandedBody: String, val foldedBody: String)
-
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun ListGridItem(
     title: String,
     body: TextBody,
     onDeleteClick: () -> Unit,
+    onShowClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    ListGridItemWithIcons(
+        title = title,
+        body = body,
+        icons = {
+            IconButton(onClick = onDeleteClick, modifier = Modifier.size(45.dp)) {
+                Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+            }
+            IconButton(onClick = onShowClick, modifier = Modifier.size(45.dp)) {
+                Icon(imageVector = Icons.Filled.RemoveRedEye, contentDescription = null)
+            }
+        },
+        modifier = modifier
+    )
+}
+
+
+@Composable
+fun ListGridItem(
+    title: String,
+    body: TextBody,
+    onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    ListGridItemWithIcons(
+        title = title,
+        body = body,
+        icons = {
+            IconButton(onClick = onDeleteClick, modifier = Modifier.size(45.dp)) {
+                Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+            }
+        },
+        modifier = modifier
+    )
+}
+
+data class TextBody(val expandedBody: String, val foldedBody: String)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ListGridItemWithIcons(
+    title: String,
+    body: TextBody,
+    icons: @Composable RowScope.() -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
@@ -114,8 +159,8 @@ fun ListGridItem(
                     .padding(top = dimensionResource(R.dimen.small_padding)),
                 contentAlignment = Alignment.CenterEnd
             ) {
-                IconButton(onClick = onDeleteClick, modifier = Modifier.size(30.dp)) {
-                    Icon(imageVector = Icons.Filled.Delete, contentDescription = null)
+                Row {
+                    this.icons()
                 }
             }
         }
