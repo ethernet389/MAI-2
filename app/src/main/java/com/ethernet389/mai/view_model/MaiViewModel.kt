@@ -1,6 +1,7 @@
 package com.ethernet389.mai.view_model
 
 import Jama.Matrix
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ethernet389.domain.model.note.BaseNote
@@ -12,8 +13,11 @@ import com.ethernet389.domain.use_case.note.NotesLoader
 import com.ethernet389.domain.use_case.template.TemplatesCreator
 import com.ethernet389.domain.use_case.template.TemplatesDeleter
 import com.ethernet389.domain.use_case.template.TemplatesLoader
+import com.ethernet389.mai.mai.FinalWeights
 import com.ethernet389.mai.mai.InputParameters
+import com.ethernet389.mai.mai.MAI
 import com.ethernet389.mai.matrix_extensions.KMatrix
+import com.ethernet389.mai.matrix_extensions.MaiCoefficients
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -94,6 +98,30 @@ data class CreationNoteState(
     )
 }
 
+class MaiNoteState(note: Note) {
+    constructor() : this(
+        Note(
+            id = -1,
+            name = "",
+            template = Template(id = -1, name = "", criteria = emptyList()),
+            candidates = emptyList(),
+            report = InputParameters(
+                KMatrix(Matrix(1, 1)),
+                listOf(KMatrix(Matrix(1, 1)))
+            ).encodeToString()
+        )
+    )
+
+    private val inputParameters = InputParameters.decodeFromString(note.report)
+
+    val finalWeights: FinalWeights = MAI(inputParameters)
+
+    val crOfCriteriaMatrix: Double = MaiCoefficients.CR(inputParameters.criteriaMatrix)
+    val crsOfEachAlternativesMatrices: List<Double> = inputParameters
+        .alternativesMatrices
+        .map { matrix -> MaiCoefficients.CR(matrix) }
+}
+
 class MaiViewModel(
     private val noteController: Controller<NotesCreator, NotesLoader, NotesDeleter>,
     private val templateController: Controller<TemplatesCreator, TemplatesLoader, TemplatesDeleter>
@@ -113,7 +141,7 @@ class MaiViewModel(
         }
     }
 
-    fun updateTemplates() {
+    private fun updateTemplates() {
         viewModelScope.launch {
             _uiStateFlow.update {
                 it.copy(templates = templateController.loader.getTemplates())
@@ -121,7 +149,7 @@ class MaiViewModel(
         }
     }
 
-    fun updateNotes() {
+    private fun updateNotes() {
         viewModelScope.launch {
             _uiStateFlow.update {
                 it.copy(notes = noteController.loader.getNotes())
@@ -129,7 +157,7 @@ class MaiViewModel(
         }
     }
 
-    fun updateData() {
+    private fun updateData() {
         viewModelScope.launch {
             launch { updateTemplates() }
             launch { updateNotes() }
@@ -156,6 +184,7 @@ class MaiViewModel(
             updateNotes()
         }
     }
+
     fun deleteUnusedTemplates() {
         viewModelScope.launch {
             templateController.deleter.deleteUnusedTemplates()
@@ -203,8 +232,6 @@ class MaiViewModel(
         }
     }
 
-    //h - position in relation list, i - position of row, j - position of column
-    //TODO: Doesn't work with 1 criteria
     fun updateMatrixByIndex(h: Int, i: Int, j: Int, newValue: Double) {
         require(newValue in relationScale)
 
@@ -235,13 +262,21 @@ class MaiViewModel(
     }
 
     fun dropCreationNoteState() = _creationNoteState.update { CreationNoteState() }
+
+    private var _maiNoteStateFlow = MutableStateFlow(MaiNoteState())
+    val maiNoteStateFlow = _maiNoteStateFlow.asStateFlow()
+
+    fun setNewCurrentMaiNoteState(note: Note) {
+        viewModelScope.launch {
+            _maiNoteStateFlow.update { MaiNoteState(note) }
+        }
+    }
 }
 
 fun CreationNoteState.toInputParameters(): InputParameters =
     InputParameters(
         criteriaMatrix = KMatrix(relationMatrices.first()),
-        candidatesMatrices = relationMatrices
+        alternativesMatrices = relationMatrices
             .subList(1, relationMatrices.size)
             .map { KMatrix(it) }
     )
-

@@ -10,6 +10,8 @@ data class FinalWeights(
     val relativeWeights: List<List<Double>>, //Row - criterion, column - candidate
     val finalRelativeWeights: List<Double> //Row - final, column - candidate
 ) {
+    constructor() : this(emptyList(), emptyList())
+
     fun encodeToString() = Json.encodeToString(this)
 
     companion object {
@@ -20,7 +22,7 @@ data class FinalWeights(
 @Serializable
 data class InputParameters(
     val criteriaMatrix: KMatrix,
-    val candidatesMatrices: List<KMatrix>
+    val alternativesMatrices: List<KMatrix>
 ) {
     fun encodeToString() = Json.encodeToString(this)
 

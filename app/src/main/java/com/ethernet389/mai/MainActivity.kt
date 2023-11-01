@@ -1,7 +1,9 @@
 package com.ethernet389.mai
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -80,8 +82,9 @@ fun MaiApp(
     viewModel: MaiViewModel = koinViewModel(),
     navController: NavHostController = rememberNavController()
 ) {
-    //UI state and current creation note state
+    //UI and MAI state and current creation note state
     val uiState by viewModel.uiStateFlow.collectAsState()
+    val maiState by viewModel.maiNoteStateFlow.collectAsState()
     val creationNoteState by viewModel.creationNoteState.collectAsState()
 
     //Annotated string resources
@@ -176,6 +179,7 @@ fun MaiApp(
                         showDeletionDialog = true
                     },
                     onShowClick = { note ->
+                        viewModel.setNewCurrentMaiNoteState(note)
                         navController.navigate(route = "${MaiScreen.Result.name}/${note.id}")
                     }
                 )
@@ -318,7 +322,13 @@ fun MaiApp(
             ) { backStackEntry ->
                 val noteId = backStackEntry.arguments?.getLong("note_id")!!
                 val note = uiState.notes.find { note -> noteId == note.id }!!
-                ResultScreen(note = note)
+
+                ResultScreen(
+                    note = note,
+                    finalWeights = maiState.finalWeights,
+                    crOfCriteriaMatrix = maiState.crOfCriteriaMatrix,
+                    crsOfEachAlternativesMatrices = maiState.crsOfEachAlternativesMatrices
+                )
             }
         }
     }

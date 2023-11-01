@@ -5,7 +5,7 @@ import com.ethernet389.mai.matrix_extensions.relativeWeights
 
 fun MAI(inputParameters: InputParameters): FinalWeights {
     val criteriaMatrix = inputParameters.criteriaMatrix.value.normalized
-    val candidatesMatrix = inputParameters.candidatesMatrices.map { it.value.normalized }
+    val candidatesMatrix = inputParameters.alternativesMatrices.map { it.value.normalized }
     val numAlt = candidatesMatrix.first().columnDimension
 
     val listOfWeights = mutableListOf<MutableList<Double>>()
