@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Arrow Colors -->
+    <!-- Arrow Colors And Coherence Colors -->
     <color name="is_inverse_color">#df211d</color>
     <color name="is_not_inverse_color">#6ac83e</color>
 </resources>

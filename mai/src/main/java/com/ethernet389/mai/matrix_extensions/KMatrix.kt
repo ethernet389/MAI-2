@@ -64,4 +64,6 @@ object MaiCoefficients {
     }
 
     fun CR(matrix: KMatrix): Double = CI(matrix) / RI(matrix)
+
+    const val MAX_OF_CR = 0.1
 }

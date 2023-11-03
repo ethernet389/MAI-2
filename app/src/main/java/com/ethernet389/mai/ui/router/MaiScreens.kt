@@ -23,7 +23,7 @@ enum class MaiScreen(
     Notes(R.string.notes, Icons.Outlined.Description, Icons.Outlined.NoteAdd),
     Templates(R.string.templates, Icons.Outlined.LibraryBooks, Icons.Outlined.LibraryAdd),
     Settings(R.string.settings, Icons.Outlined.Engineering),
-    Information(R.string.info, Icons.Outlined.HelpOutline),
+    Information(R.string.information, Icons.Outlined.HelpOutline),
     CreateNote(
         navigationTitle = R.string.create_note,
         navigationIcon = Icons.Outlined.NavigateNext,
@@ -33,7 +33,6 @@ enum class MaiScreen(
     Result(
         navigationTitle = R.string.result,
         navigationIcon = Icons.Outlined.Done,
-        fabIcon = Icons.Outlined.Done,
         isVisibleRoute = false
     )
 }

@@ -6,7 +6,7 @@
     <string name="notes">Записи</string>
     <string name="templates">Шаблоны</string>
     <string name="settings">Настройки</string>
-    <string name="info">Инфо</string>
+    <string name="information">Информация</string>
     <string name="result">Результат</string>
     <string name="create_note">Создание записи</string>
 
@@ -44,6 +44,12 @@
     <string name="delete_all_unused_template_warning">Вы уверены, что хотите удалить\n <b>все неиспользуемые шаблоны</b>?</string>
     <string name="delete_template_warning">Вы уверены, что хотите удалить\n <b>шаблон и все связанные с ним записи</b>?</string>
     <string name="delete_note_warning">Вы уверены, что хотите удалить\n <b>запись</b>?</string>
+
+    <!-- Coherence -->
+    <string name="coherence_of_criteria">Согласованность критериев</string>
+    <string name="coherence_of_alternatives_by_criterion">Согласованность альтернатив по критерию</string>
+    <string name="coherent">Согласованно</string>
+    <string name="non_coherent">Не-Согласованно</string>
 
     <!-- Creation Error Messages -->
     <string name="empty_fields_error">Поля не заполнены!</string>
