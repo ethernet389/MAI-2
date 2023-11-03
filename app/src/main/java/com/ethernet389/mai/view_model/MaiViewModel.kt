@@ -12,15 +12,15 @@ import com.ethernet389.domain.use_case.note.NotesLoader
 import com.ethernet389.domain.use_case.template.TemplatesCreator
 import com.ethernet389.domain.use_case.template.TemplatesDeleter
 import com.ethernet389.domain.use_case.template.TemplatesLoader
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import com.ethernet389.mai.mai.FinalWeights
 import com.ethernet389.mai.mai.InputParameters
 import com.ethernet389.mai.mai.MAI
 import com.ethernet389.mai.matrix_extensions.KMatrix
 import com.ethernet389.mai.matrix_extensions.MaiCoefficients
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 data class Controller<Creator, Loader, Deleter>(
     val creator: Creator,
