@@ -319,14 +319,17 @@ fun MaiApp(
                 arguments = listOf(navArgument("note_id") { type = NavType.LongType })
             ) { backStackEntry ->
                 val noteId = backStackEntry.arguments?.getLong("note_id")!!
-                val note = uiState.notes.find { note -> noteId == note.id }!!
-
-                ResultScreen(
-                    note = note,
-                    finalWeights = maiState.finalWeights,
-                    crOfCriteriaMatrix = maiState.crOfCriteriaMatrix,
-                    crsOfEachAlternativesMatrices = maiState.crsOfEachAlternativesMatrices
-                )
+                val note = uiState.notes.find { note -> noteId == note.id }
+                if (note != null) {
+                    ResultScreen(
+                        note = note,
+                        finalWeights = maiState.finalWeights,
+                        crOfCriteriaMatrix = maiState.crOfCriteriaMatrix,
+                        crsOfEachAlternativesMatrices = maiState.crsOfEachAlternativesMatrices
+                    )
+                } else {
+                    navController.popBackStack(route = MaiScreen.Notes.name, inclusive = false)
+                }
             }
         }
     }
