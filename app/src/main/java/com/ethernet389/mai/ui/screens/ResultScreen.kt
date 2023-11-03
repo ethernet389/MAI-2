@@ -1,6 +1,7 @@
 package com.ethernet389.mai.ui.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,7 +33,7 @@ fun ResultScreen(
         .mapIndexed { i, pair -> "${i + 1}. ${pair.first} (${pair.second.toFloat()})" }
         .reduce { acc, s -> "$acc\n$s" }
 
-    val consistencyBody = (listOf(crOfCriteriaMatrix) + crsOfEachAlternativesMatrices)
+    val consistencyOfAlternativesMatricesBody = crsOfEachAlternativesMatrices
         .map { cr -> cr.toString() }
         .reduceIndexed { i, acc, s -> "$acc\n${i + 1}. $s" }
 
@@ -40,35 +41,51 @@ fun ResultScreen(
         modifier = modifier
     ) {
         item {
-            ItemCard(title = "Rating", body = ratingBody, modifier = Modifier.fillMaxWidth())
+            ItemCard(modifier = Modifier.fillMaxWidth(),
+                content = {
+                    Text(
+                        text = "Rating",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(text = ratingBody)
+                }
+            )
         }
         item {
-            ItemCard(title = "Consistency", body = consistencyBody, modifier = modifier.fillMaxWidth())
+            ItemCard(
+                modifier = modifier.fillMaxWidth(),
+                content = {
+                    Text(
+                        text = "Consistency",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(text = consistencyOfAlternativesMatricesBody)
+                }
+            )
         }
     }
 }
 
 @Composable
-private fun ItemCard(title: String, body: String, modifier: Modifier = Modifier) {
+private fun ItemCard(
+    content: @Composable () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(
         elevation = CardDefaults
             .cardElevation(defaultElevation = dimensionResource(R.dimen.card_elevation)),
         modifier = modifier.padding(dimensionResource(R.dimen.little_padding)),
         shape = MaterialTheme.shapes.medium
     )
-        {
+    {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
+            content = { content() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(dimensionResource(R.dimen.medium_padding))
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-            Text(text = body)
-        }
+        )
     }
 }

@@ -1,17 +1,15 @@
 package com.ethernet389.mai.mai
 
-import com.ethernet389.mai.matrix_extensions.KMatrix
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import com.ethernet389.mai.matrix_extensions.KMatrix
 
 @Serializable
 data class FinalWeights(
     val relativeWeights: List<List<Double>>, //Row - criterion, column - candidate
     val finalRelativeWeights: List<Double> //Row - final, column - candidate
 ) {
-    constructor() : this(emptyList(), emptyList())
-
     fun encodeToString() = Json.encodeToString(this)
 
     companion object {
@@ -22,7 +20,7 @@ data class FinalWeights(
 @Serializable
 data class InputParameters(
     val criteriaMatrix: KMatrix,
-    val alternativesMatrices: List<KMatrix>
+    val candidatesMatrices: List<KMatrix>
 ) {
     fun encodeToString() = Json.encodeToString(this)
 

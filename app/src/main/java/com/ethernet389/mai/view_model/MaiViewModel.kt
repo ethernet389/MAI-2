@@ -1,7 +1,6 @@
 package com.ethernet389.mai.view_model
 
 import Jama.Matrix
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ethernet389.domain.model.note.BaseNote
@@ -13,15 +12,15 @@ import com.ethernet389.domain.use_case.note.NotesLoader
 import com.ethernet389.domain.use_case.template.TemplatesCreator
 import com.ethernet389.domain.use_case.template.TemplatesDeleter
 import com.ethernet389.domain.use_case.template.TemplatesLoader
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import com.ethernet389.mai.mai.FinalWeights
 import com.ethernet389.mai.mai.InputParameters
 import com.ethernet389.mai.mai.MAI
 import com.ethernet389.mai.matrix_extensions.KMatrix
 import com.ethernet389.mai.matrix_extensions.MaiCoefficients
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 data class Controller<Creator, Loader, Deleter>(
     val creator: Creator,
@@ -116,9 +115,9 @@ class MaiNoteState(note: Note) {
 
     val finalWeights: FinalWeights = MAI(inputParameters)
 
-    val crOfCriteriaMatrix: Double = MaiCoefficients.CR(inputParameters.criteriaMatrix)
+    val crOfCriteriaMatrix: Double = MaiCoefficients.RI(inputParameters.criteriaMatrix)
     val crsOfEachAlternativesMatrices: List<Double> = inputParameters
-        .alternativesMatrices
+        .candidatesMatrices
         .map { matrix -> MaiCoefficients.CR(matrix) }
 }
 
@@ -276,7 +275,7 @@ class MaiViewModel(
 fun CreationNoteState.toInputParameters(): InputParameters =
     InputParameters(
         criteriaMatrix = KMatrix(relationMatrices.first()),
-        alternativesMatrices = relationMatrices
+        candidatesMatrices = relationMatrices
             .subList(1, relationMatrices.size)
             .map { KMatrix(it) }
     )

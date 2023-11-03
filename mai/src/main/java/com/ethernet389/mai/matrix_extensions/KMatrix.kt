@@ -11,7 +11,7 @@ value class KMatrix(@Serializable(with = MatrixSerializer::class) val value: Mat
 //Properties Extensions
 val Matrix.sumOfColumns: List<Double>
     get() {
-        val columnSum = MutableList(columnDimension) {0.0}
+        val columnSum = MutableList(columnDimension) { 0.0 }
         for (j in 0 until columnDimension) {
             var sum = 0.0
             for (i in 0 until rowDimension) {
@@ -23,7 +23,7 @@ val Matrix.sumOfColumns: List<Double>
     }
 val Matrix.sumOfRows: List<Double>
     get() {
-        val linesSum = MutableList(rowDimension) {0.0}
+        val linesSum = MutableList(rowDimension) { 0.0 }
         for (j in 0 until rowDimension) {
             var sum = 0.0
             for (i in 0 until columnDimension) {
@@ -34,11 +34,7 @@ val Matrix.sumOfRows: List<Double>
         return linesSum
     }
 val Matrix.relativeWeights: List<Double>
-    get() {
-        val ret = sumOfRows.toMutableList()
-        for (i in ret.indices) ret[i] /= columnDimension.toDouble()
-        return ret
-    }
+    get() = normalized.sumOfRows.map { sum -> sum / columnDimension.toDouble() }
 
 fun Matrix.normalize(): Matrix {
     val columnSum = sumOfColumns
@@ -50,13 +46,13 @@ fun Matrix.normalize(): Matrix {
     }
     return this
 }
+
 val Matrix.normalized
     get() = Matrix(arrayCopy).normalize()
 
-object MaiCoefficients{
+object MaiCoefficients {
     fun CI(matrix: KMatrix): Double = with(matrix.value) {
-        val normalizedMatrixWeights =
-            normalized.relativeWeights
+        val normalizedMatrixWeights = normalized.relativeWeights
         val weights = Matrix(normalizedMatrixWeights.size, 1)
         for (i in 0 until weights.rowDimension) weights[i, 0] = normalizedMatrixWeights[i]
         val resultMatrix = this * weights
