@@ -3,4 +3,8 @@
     <!-- Arrow Colors -->
     <color name="is_inverse_color">#ff4d4d</color>
     <color name="is_not_inverse_color">#4dff4d</color>
+
+    <!-- Hyperlink colors -->
+    <color name="link">#5555E0</color>
+    <color name="visited_link">#683E8E</color>
 </resources>

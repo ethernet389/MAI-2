@@ -36,7 +36,9 @@ fun ConfirmationDeletionDialog(
         title = {
             Text(
                 text = stringResource(R.string.need_confirmation),
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
         },
         text = {

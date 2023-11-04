@@ -58,7 +58,7 @@ fun ResultScreen(
             ItemCard(modifier = Modifier.fillMaxWidth(),
                 content = {
                     Text(
-                        text = "Rating",
+                        text = stringResource(R.string.rating),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold
                     )
@@ -144,7 +144,7 @@ private fun CrStatus(
 @Composable
 @ReadOnlyComposable
 private fun isConsistent(d: Double): Pair<String, Boolean> {
-    return when (abs(d) <= MaiCoefficients.MAX_OF_CR) {
+    return when (d <= MaiCoefficients.MAX_OF_CR) {
         true -> stringResource(R.string.coherent) to true
         false -> stringResource(R.string.non_coherent) to false
     }

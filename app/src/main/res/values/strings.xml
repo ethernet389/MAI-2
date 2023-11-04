@@ -58,30 +58,26 @@
         1. Create a template from numerically measured criteria
         \n2. Fill out the survey, chosen a template
         \n3. View the result and chose candidate with highest rating
-        \n<b>Note 1:</b> If you forgot criteria of template evaluation, <b>hold</b> template button
+        \n<b>Note 1:</b> Click on a template/note to view details
+        \n<b>Note 2:</b> On the first page you need to rate
+        the importance of selection criteria relative to each other.
+        The following pages evaluate the alternatives relative to each other for each criterion.
+
     </string>
     <string name="how_to_use">How to use this app</string>
-    <string name="how_to_create">How to create survey/template</string>
-    <string name="how_to_fill">
-        A table cell is required (For example, string i and column j).
-        Next choose integer value from 1 to 9.
-        \n\n
-        <b>Meaning of numeric values:</b>
-        \n1 - string i <i>is equally important</i> column j
-        \n2 - string i <i> is a little more important than</i> column j
-        \n5 - string i <i> is significantly important than</i> column j
-        \n9 - string i <i> is maximally important than</i> column j
-        \n\n
-        <b>Note 1:</b>
-        Values like 1/2, 1/3, 1/4 etc. are the opposite to the previously described.
-        \n\n
-        <b>Note 2:</b>
-        If you suddenly forgot, what mean string or column, <b>tap</b> on title
-        (left or top respectively)
-        \n\n
-        <b>Note 3:</b>
-        Reduction of criteria and candidates is made by <b>the first three</b>.
-        The sequence is observed.
+    <string name="meaning_of_numbers">How to create survey/template</string>
+    <string name="description_of_numbers">
+        Each number shows how many times
+        item in the beginning of the arrow
+        is more important
+        than item in ending of the arrow\n\n
+        <b>A -> B ==> A is n times more important than B</b>
+    </string>
+    <string name="coherency">Coherency</string>
+    <string name="description_of_coherent">
+        This is an indicator of the reliability of the data you provided.\n
+        If the data <b>does not contradict each other</b>, then it is <b>coherent</b>.\n
+        If the data <b>contradicts each other</b>, then it is <b>non-coherent</b>.
     </string>
     <string name="literature">Literature</string>
     <string-array name="literature_names">
@@ -95,5 +91,13 @@
         <item>https://github.com/ethernet389/Solve-on-Java/blob/main/docs/saaty.pdf</item>
     </string-array>
 
+    <!-- Authors -->
+    <string name="authors">Authors</string>
+    <string-array name="authors">
+        <item>Simakov Gleb Dmitrievich</item>
+        <item>Lesnikov Ivan Nikolaevich</item>
+    </string-array>
+
+    <string name="rating">Rating</string>
     <string name="_null">Null</string>
 </resources>

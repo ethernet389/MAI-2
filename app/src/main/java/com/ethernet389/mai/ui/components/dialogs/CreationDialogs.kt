@@ -3,8 +3,10 @@ package com.ethernet389.mai.ui.components.dialogs
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -52,8 +54,12 @@ private fun Name(
     value: String,
     onValueChanged: (String) -> Unit,
     isNameError: Boolean = false,
+    modifier: Modifier = Modifier
 ) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
         Text(
             text = title,
             fontWeight = FontWeight.SemiBold,
@@ -67,7 +73,8 @@ private fun Name(
             placeholder = { Text(text = placeholder) },
             label = { Text(text = stringResource(R.string.name)) },
             singleLine = true,
-            isError = isNameError
+            isError = isNameError,
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -88,24 +95,30 @@ fun TemplateCreationDialog(
         var isOptionsError by remember { mutableStateOf(false) }
 
         Card(
-            modifier = modifier.width(200.dp),
+            modifier = modifier.width(IntrinsicSize.Min),
             elevation = CardDefaults
                 .cardElevation(defaultElevation = dimensionResource(R.dimen.card_elevation))
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.width(IntrinsicSize.Min)
+            ) {
                 Name(
                     title = stringResource(R.string.template),
                     placeholder = stringResource(R.string.template_name_example),
                     value = name,
                     onValueChanged = { newName -> name = newName },
-                    isNameError = isNameError
+                    isNameError = isNameError,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 TextField(
                     value = criteriaString,
                     onValueChange = { newOptions -> criteriaString = newOptions },
+                    singleLine = true,
                     placeholder = { Text(text = stringResource(R.string.criteria_example)) },
                     label = { Text(text = stringResource(R.string.criteria)) },
-                    isError = isOptionsError
+                    isError = isOptionsError,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
@@ -157,7 +170,7 @@ fun NoteCreationDialog(
         val templateListState = rememberLazyListState()
 
         Card(
-            modifier = modifier.width(200.dp),
+            modifier = modifier.width(300.dp),
             elevation = CardDefaults
                 .cardElevation(defaultElevation = dimensionResource(R.dimen.card_elevation))
         ) {
@@ -167,14 +180,16 @@ fun NoteCreationDialog(
                     placeholder = stringResource(R.string.note_name_example),
                     value = name,
                     onValueChanged = { newName -> name = newName },
-                    isNameError = isNameError
+                    isNameError = isNameError,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 TextField(
                     value = alternatives,
                     onValueChange = { newAlternatives -> alternatives = newAlternatives },
                     placeholder = { Text(text = stringResource(R.string.alternatives_example)) },
                     label = { Text(text = stringResource(R.string.alternatives)) },
-                    isError = isAlternativeError
+                    isError = isAlternativeError,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Text(
                     text = stringResource(R.string.templates),
