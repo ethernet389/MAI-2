@@ -1,5 +1,6 @@
 package com.ethernet389.data.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -8,10 +9,16 @@ import com.ethernet389.domain.model.template.Template
 import kotlinx.serialization.Serializable
 
 @Serializable
-@Entity(tableName = "templates", indices = [Index("id")])
+@Entity(
+    tableName = "templates",
+    indices = [
+        Index("_id", name = "template_id_index", unique = true),
+        Index("_name", name = "template_name_index", unique = true),
+    ]
+)
 data class DataTemplate(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val name: String,
+    @ColumnInfo(name = "_id") @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @ColumnInfo(name = "_name") val name: String,
     val criteria: List<String>,
 )
 

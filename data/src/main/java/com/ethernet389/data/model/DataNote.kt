@@ -14,17 +14,21 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Entity(
     tableName = "notes",
-    indices = [Index("id")],
+    indices = [
+        Index("_id", name = "note_id_index", unique = true),
+        Index("_name", name = "note_name_index", unique = true),
+        Index("template_id", name = "note_template_id_index")
+    ],
     foreignKeys = [ForeignKey(
         entity = DataTemplate::class,
-        parentColumns = ["id"],
+        parentColumns = ["_id"],
         childColumns = ["template_id"],
         onDelete = ForeignKey.CASCADE
     )]
 )
 data class DataNote(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val name: String,
+    @ColumnInfo(name = "_id") @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @ColumnInfo(name = "_name") val name: String,
     @SerialName("template_id") @ColumnInfo("template_id") val templateId: Long,
     val candidates: List<String>,
     val report: String

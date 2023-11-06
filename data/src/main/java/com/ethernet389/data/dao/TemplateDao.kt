@@ -20,7 +20,7 @@ interface TemplateDao {
     @Delete
     fun deleteTemplate(template: DataTemplate): Int
 
-    @Query("SELECT * FROM templates WHERE id = :id;")
+    @Query("SELECT * FROM templates WHERE _id = :id;")
     fun getTemplateById(id: Long): DataTemplate
 
     @Query(
@@ -29,7 +29,7 @@ interface TemplateDao {
         WHERE
             (SELECT COUNT(notes.template_id)
             FROM notes
-            WHERE templates.id = notes.template_id) = 0;
+            WHERE templates._id = notes.template_id) = 0;
         """
     )
     fun deleteUnusedTemplates()

@@ -11,6 +11,7 @@ import com.ethernet389.data.model.DataTemplate
 @Database(
     version = 1,
     entities = [DataTemplate::class, DataNote::class],
+    exportSchema = false
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
