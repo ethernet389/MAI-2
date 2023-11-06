@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import com.ethernet389.mai.R
 import com.ethernet389.mai.ui.components.RelationCard
-import com.ethernet389.mai.view_model.CreationNoteState
+import com.ethernet389.mai.view_model.states.CreationNoteState
 
 data class CardActions(
     val onArrowClick: (Int, Int, Int, Boolean) -> Unit,

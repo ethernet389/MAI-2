@@ -63,7 +63,11 @@ object MaiCoefficients {
         (1.98 * (columnDimension - 2)) / columnDimension
     }
 
-    fun CR(matrix: KMatrix): Double = CI(matrix) / RI(matrix)
+    fun CR(matrix: KMatrix): Double {
+        //When columnDimension is 2, RI = 0, then CR = Inf, but matrix is consistent
+        if (matrix.value.columnDimension == 2) return .0
+        return CI(matrix) / RI(matrix)
+    }
 
     const val MAX_OF_CR = 0.1
 }

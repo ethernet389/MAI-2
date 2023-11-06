@@ -1,6 +1,5 @@
 package com.ethernet389.mai.view_model
 
-import Jama.Matrix
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ethernet389.domain.model.note.BaseNote
@@ -12,11 +11,12 @@ import com.ethernet389.domain.use_case.note.NotesLoader
 import com.ethernet389.domain.use_case.template.TemplatesCreator
 import com.ethernet389.domain.use_case.template.TemplatesDeleter
 import com.ethernet389.domain.use_case.template.TemplatesLoader
-import com.ethernet389.mai.mai.FinalWeights
 import com.ethernet389.mai.mai.InputParameters
-import com.ethernet389.mai.mai.MAI
 import com.ethernet389.mai.matrix_extensions.KMatrix
-import com.ethernet389.mai.matrix_extensions.MaiCoefficients
+import com.ethernet389.mai.view_model.states.CreationNoteState
+import com.ethernet389.mai.view_model.states.MaiNoteState
+import com.ethernet389.mai.view_model.states.MaiUiState
+import com.ethernet389.mai.view_model.states.relationScale
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -28,107 +28,13 @@ data class Controller<Creator, Loader, Deleter>(
     val deleter: Deleter
 )
 
-data class MaiUiState(
-    val templates: List<Template>,
-    val notes: List<Note>
-) {
-    constructor() : this(emptyList(), emptyList())
-}
-
-//Note Creation Info Data Classes
-val relationScale = 1.0..9.0
-
-//First Matrix Is Template Relation
-data class CreationNoteState(
-    val noteName: String,
-    val template: Template,
-    val alternatives: List<String>,
-    val relationMatrices: List<Matrix>,
-) {
-    //Check the matrices for consistency
-    init {
-        //Check sizes
-        require(relationMatrices.size == template.criteria.size + 1)
-        //Template matrix
-        with(relationMatrices.first()) {
-            require(
-                this.columnDimension == this.rowDimension &&
-                        this.columnDimension == template.criteria.size
-            )
-        }
-        //Candidates matrices
-        for (i in 1..relationMatrices.lastIndex) {
-            require(
-                relationMatrices[i].columnDimension == relationMatrices[i].rowDimension &&
-                        relationMatrices[i].columnDimension == alternatives.size
-            )
-        }
-    }
-
-    constructor() : this(
-        noteName = "",
-        template = Template(),
-        alternatives = emptyList(),
-        relationMatrices = listOf(Matrix(0, 0))
-    )
-
-    constructor(
-        noteName: String,
-        template: Template,
-        alternatives: List<String>
-    ) : this(
-        noteName = noteName,
-        template = template,
-        alternatives = alternatives,
-        relationMatrices = listOf(
-            Matrix(
-                template.criteria.size,
-                template.criteria.size,
-                relationScale.start
-            )
-        ) +
-                List(template.criteria.size) {
-                    Matrix(
-                        alternatives.size,
-                        alternatives.size,
-                        relationScale.start
-                    )
-                }
-    )
-}
-
-class MaiNoteState(note: Note) {
-    constructor() : this(
-        Note(
-            id = -1,
-            name = "",
-            template = Template(id = -1, name = "", criteria = emptyList()),
-            candidates = emptyList(),
-            report = InputParameters(
-                KMatrix(Matrix(1, 1)),
-                listOf(KMatrix(Matrix(1, 1)))
-            ).encodeToString()
-        )
-    )
-
-    private val inputParameters = InputParameters.decodeFromString(note.report)
-
-    val finalWeights: FinalWeights = MAI(inputParameters)
-
-    val crOfCriteriaMatrix: Double = MaiCoefficients.RI(inputParameters.criteriaMatrix)
-    val crsOfEachAlternativesMatrices: List<Double> = inputParameters
-        .candidatesMatrices
-        .map { matrix -> MaiCoefficients.CR(matrix) }
-}
-
 class MaiViewModel(
     private val noteController: Controller<NotesCreator, NotesLoader, NotesDeleter>,
     private val templateController: Controller<TemplatesCreator, TemplatesLoader, TemplatesDeleter>
 ) : ViewModel() {
-
     private var _uiStateFlow = MutableStateFlow(MaiUiState())
     val uiStateFlow = _uiStateFlow.asStateFlow()
-
+    
     init {
         updateData()
     }
@@ -262,12 +168,12 @@ class MaiViewModel(
 
     fun dropCreationNoteState() = _creationNoteState.update { CreationNoteState() }
 
-    private var _maiNoteStateFlow = MutableStateFlow(MaiNoteState())
-    val maiNoteStateFlow = _maiNoteStateFlow.asStateFlow()
+    private var _maiResultNoteStateFlow = MutableStateFlow(MaiNoteState())
+    val maiResultNoteStateFlow = _maiResultNoteStateFlow.asStateFlow()
 
     fun setNewCurrentMaiNoteState(note: Note) {
         viewModelScope.launch {
-            _maiNoteStateFlow.update { MaiNoteState(note) }
+            _maiResultNoteStateFlow.update { MaiNoteState(note) }
         }
     }
 }

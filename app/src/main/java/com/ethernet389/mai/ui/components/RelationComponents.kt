@@ -114,21 +114,21 @@ fun ParameterToParameter(
     val degrees by animateFloatAsState(
         targetValue = if (isInverse) 180f else 0f,
         label = "Rotate arrow on 180 degrees",
-        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+        animationSpec = tween(durationMillis = 300, easing = LinearEasing)
     )
     val color by animateColorAsState(
         targetValue = colorResource(
             if (isInverse) R.color.is_inverse_color else R.color.is_not_inverse_color
         ),
         label = "Change color to opposite",
-        animationSpec = tween(durationMillis = 300, easing = LinearEasing)
+        animationSpec = tween(durationMillis = 400, easing = LinearEasing)
     )
     val inverseColor by animateColorAsState(
         targetValue = colorResource(
             if (!isInverse) R.color.is_inverse_color else R.color.is_not_inverse_color
         ),
         label = "Change color to opposite",
-        animationSpec = tween(durationMillis = 300, easing = LinearEasing)
+        animationSpec = tween(durationMillis = 400, easing = LinearEasing)
     )
     Column(
         horizontalAlignment = Alignment.CenterHorizontally

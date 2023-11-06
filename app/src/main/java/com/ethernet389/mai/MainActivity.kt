@@ -5,17 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.EaseInSine
-import androidx.compose.animation.core.Easing
-import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.EaseOutSine
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -70,7 +69,7 @@ import com.ethernet389.mai.ui.theme.MAITheme
 import com.ethernet389.mai.util.annotatedStringResource
 import com.ethernet389.mai.util.spannableStringToAnnotatedString
 import com.ethernet389.mai.view_model.MaiViewModel
-import com.ethernet389.mai.view_model.relationScale
+import com.ethernet389.mai.view_model.states.relationScale
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -99,7 +98,7 @@ fun MaiApp(
 ) {
     //UI and MAI state and current creation note state
     val uiState by viewModel.uiStateFlow.collectAsState()
-    val maiState by viewModel.maiNoteStateFlow.collectAsState()
+    val maiState by viewModel.maiResultNoteStateFlow.collectAsState()
     val creationNoteState by viewModel.creationNoteState.collectAsState()
 
     //Annotated string resources
@@ -155,7 +154,9 @@ fun MaiApp(
                 appScreens = screenArray,
                 currentScreen = currentScreen,
                 onRouteIconClick = { newScreen ->
-                    navController.navigate(route = newScreen.name)
+                    if (newScreen != currentScreen) {
+                        navController.navigate(route = newScreen.name)
+                    }
                 }
             )
         },
@@ -358,14 +359,19 @@ private fun NavGraphBuilder.animatedComposable(
     deepLinks: List<NavDeepLink> = emptyList(),
     enterTransition: (@JvmSuppressWildcards
     AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?)? = {
-        slideInHorizontally { it / 2 } + fadeIn(
+        slideInVertically(
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioLowBouncy,
+                stiffness = Spring.StiffnessLow
+            )
+        ) { it / 2 } + fadeIn(
             animationSpec = tween(easing = EaseInSine)
         )
     },
     exitTransition: (@JvmSuppressWildcards
     AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?)? = {
-        slideOutHorizontally { -it / 2 } + fadeOut(
-            animationSpec = tween(easing = EaseInSine)
+        fadeOut(
+            animationSpec = tween(easing = EaseOutSine)
         )
     },
     popEnterTransition: (@JvmSuppressWildcards
@@ -376,7 +382,6 @@ private fun NavGraphBuilder.animatedComposable(
         exitTransition,
     content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
 ) {
-    //TODO: Create right-to-left and left-to-right animation
     composable(
         route = route,
         arguments = arguments,

@@ -13,7 +13,7 @@ import androidx.compose.material.icons.outlined.NoteAdd
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.ethernet389.mai.R
 
-//Each name doesn't contains other name
+//Each name doesn't contains other name (Unique routes)
 enum class MaiScreen(
     @StringRes val navigationTitle: Int,
     val navigationIcon: ImageVector,
