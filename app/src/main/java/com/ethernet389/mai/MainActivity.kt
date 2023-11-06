@@ -3,6 +3,19 @@ package com.ethernet389.mai
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.EaseInSine
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -27,6 +40,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavDeepLink
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -167,7 +184,7 @@ fun MaiApp(
             startDestination = MaiScreen.Templates.name,
             modifier = Modifier.padding(paddingValues)
         ) {
-            composable(route = MaiScreen.Notes.name) {
+            animatedComposable(route = MaiScreen.Notes.name) {
                 var lambda by remember { mutableStateOf({}) }
                 NotesScreen(
                     notes = uiState.notes,
@@ -208,7 +225,7 @@ fun MaiApp(
                     )
                 }
             }
-            composable(route = MaiScreen.Templates.name) {
+            animatedComposable(route = MaiScreen.Templates.name) {
                 var lambda by remember { mutableStateOf({}) }
                 TemplatesScreen(
                     templates = uiState.templates,
@@ -238,7 +255,7 @@ fun MaiApp(
                     )
                 }
             }
-            composable(route = MaiScreen.Settings.name) {
+            animatedComposable(route = MaiScreen.Settings.name) {
                 var text by remember {
                     mutableStateOf(AnnotatedString(""))
                 }
@@ -281,12 +298,12 @@ fun MaiApp(
                     )
                 }
             }
-            composable(route = MaiScreen.Information.name) { InfoScreen() }
-            composable(route = MaiScreen.CreateNote.name) {
+            animatedComposable(route = MaiScreen.Information.name) { InfoScreen() }
+            animatedComposable(route = MaiScreen.CreateNote.name) {
                 val noTemplateCriteriaComparison = creationNoteState.template.criteria.size == 1
                 val noCandidatesComparison = creationNoteState.alternatives.size == 1
                 if (noTemplateCriteriaComparison && noCandidatesComparison) {
-                    return@composable
+                    return@animatedComposable
                 }
                 val cardActions = CardActions(
                     onPlusClick = { pageIndex, currentFirst, currentSecond, newValue ->
@@ -314,7 +331,7 @@ fun MaiApp(
                     relationScale = relationScale
                 )
             }
-            composable(
+            animatedComposable(
                 route = "${MaiScreen.Result.name}/{note_id}",
                 arguments = listOf(navArgument("note_id") { type = NavType.LongType })
             ) { backStackEntry ->
@@ -333,4 +350,41 @@ fun MaiApp(
             }
         }
     }
+}
+
+private fun NavGraphBuilder.animatedComposable(
+    route: String,
+    arguments: List<NamedNavArgument> = emptyList(),
+    deepLinks: List<NavDeepLink> = emptyList(),
+    enterTransition: (@JvmSuppressWildcards
+    AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?)? = {
+        slideInHorizontally { it / 2 } + fadeIn(
+            animationSpec = tween(easing = EaseInSine)
+        )
+    },
+    exitTransition: (@JvmSuppressWildcards
+    AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?)? = {
+        slideOutHorizontally { -it / 2 } + fadeOut(
+            animationSpec = tween(easing = EaseInSine)
+        )
+    },
+    popEnterTransition: (@JvmSuppressWildcards
+    AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition?)? =
+        enterTransition,
+    popExitTransition: (@JvmSuppressWildcards
+    AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition?)? =
+        exitTransition,
+    content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
+) {
+    //TODO: Create right-to-left and left-to-right animation
+    composable(
+        route = route,
+        arguments = arguments,
+        deepLinks = deepLinks,
+        enterTransition = enterTransition,
+        exitTransition = exitTransition,
+        popEnterTransition = popEnterTransition,
+        popExitTransition = popExitTransition,
+        content = content
+    )
 }

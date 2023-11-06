@@ -5,10 +5,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -28,12 +32,16 @@ fun SettingsScreen(
     onDeleteUnusedTemplatesClick: () -> Unit,
     onClearAllDatabaseClick: () -> Unit
 ) {
-    OperationsCard(
-        onDeleteNotesClick = onDeleteNotesClick,
-        onDeleteUnusedTemplatesClick = onDeleteUnusedTemplatesClick,
-        onClearAllDatabaseClick = onClearAllDatabaseClick,
-        modifier = modifier
-    )
+    Column(modifier = modifier.fillMaxSize()) {
+        OperationsCard(
+            onDeleteNotesClick = onDeleteNotesClick,
+            onDeleteUnusedTemplatesClick = onDeleteUnusedTemplatesClick,
+            onClearAllDatabaseClick = onClearAllDatabaseClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(dimensionResource(R.dimen.little_padding))
+        )
+    }
 }
 
 
@@ -45,7 +53,9 @@ private fun OperationsCard(
     onClearAllDatabaseClick: () -> Unit,
 ) {
     Card(
-        modifier = modifier.padding(dimensionResource(R.dimen.little_padding))
+        modifier = modifier,
+        elevation = CardDefaults
+            .cardElevation(defaultElevation = dimensionResource(R.dimen.card_elevation))
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
@@ -55,15 +65,14 @@ private fun OperationsCard(
                 textAlign = TextAlign.Center,
                 modifier = modifier.padding(dimensionResource(R.dimen.medium_padding))
             )
-            Row(
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.height(intrinsicSize = IntrinsicSize.Max)
-            ) {
-                val buttonModifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
+            Column(
+                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.small_padding)),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .width(intrinsicSize = IntrinsicSize.Max)
                     .padding(dimensionResource(R.dimen.small_padding))
+            ) {
+                val buttonModifier = Modifier.fillMaxWidth()
                 RowItem(
                     text = stringResource(R.string.clear_all_data),
                     onClick = onClearAllDatabaseClick,

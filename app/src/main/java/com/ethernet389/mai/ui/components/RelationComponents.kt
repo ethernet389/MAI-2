@@ -112,8 +112,8 @@ fun ParameterToParameter(
     modifier: Modifier = Modifier
 ) {
     val degrees by animateFloatAsState(
-        targetValue = if (isInverse) 3 * 180f else 0f,
-        label = "Rotate arrow on 3*180 degrees",
+        targetValue = if (isInverse) 180f else 0f,
+        label = "Rotate arrow on 180 degrees",
         animationSpec = tween(durationMillis = 200, easing = LinearEasing)
     )
     val color by animateColorAsState(
