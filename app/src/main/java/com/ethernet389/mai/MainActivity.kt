@@ -1,6 +1,7 @@
 package com.ethernet389.mai
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContentScope
@@ -209,17 +210,33 @@ fun MaiApp(
                         text = annotatedStringResource(R.string.delete_note_warning)
                     )
                 } else if (showCreationDialog) {
+                    val context = LocalContext.current
+                    val text = stringResource(
+                        R.string.unique_constraint_error,
+                        stringResource(R.string.note)
+                    )
                     NoteCreationDialog(
                         onDismissRequest = { showCreationDialog = false },
                         onCreateRequest = { noteName, chosenTemplate, alternatives ->
+                            //All names should be unique!
+                            if (uiState.notes.any { it.name == noteName }) {
+                                Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+                                return@NoteCreationDialog
+                            }
                             val template = uiState.templates.find { it.id == chosenTemplate.id }!!
                             //Show error message when number of alternatives = 1 and number criteria = 1
                             if (alternatives.size <= 1 && template.criteria.size <= 1) {
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.template_and_note_incompatibility_error),
+                                    Toast.LENGTH_LONG
+                                ).show()
                                 return@NoteCreationDialog
                             }
                             viewModel.createNewCreationNoteState(noteName, template, alternatives)
                             navController.navigate(MaiScreen.CreateNote.name)
                             showCreationDialog = false
+
                         },
                         templates = uiState.templates,
                         modifier = Modifier.verticalScroll(state = rememberScrollState())
@@ -246,11 +263,21 @@ fun MaiApp(
                         text = annotatedStringResource(R.string.delete_template_warning)
                     )
                 } else if (showCreationDialog) {
+                    val context = LocalContext.current
+                    val text = stringResource(
+                        R.string.unique_constraint_error,
+                        stringResource(R.string.template)
+                    )
                     TemplateCreationDialog(
                         onDismissRequest = { showCreationDialog = false },
                         onCreateRequest = { newTemplate ->
-                            viewModel.createTemplate(newTemplate)
-                            showCreationDialog = false
+                            //All names should be unique!
+                            if (uiState.templates.any { it.name == newTemplate.name }) {
+                                Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+                            } else {
+                                viewModel.createTemplate(newTemplate)
+                                showCreationDialog = false
+                            }
                         },
                         modifier = Modifier.verticalScroll(state = rememberScrollState())
                     )

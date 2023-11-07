@@ -51,21 +51,24 @@
     <string name="non_coherent">Non-Coherent</string>
 
     <!-- Creation Error Messages -->
-    <string name="empty_fields_error">Fields aren\'t filled in!</string>
+    <string name="unique_constraint_error">%s with this name already exists!</string>
+    <string name="template_and_note_incompatibility_error">Count of criteria and count of alternatives doesn\'t compatibility!</string>
 
     <!-- Info -->
     <string name="instruction">
         1. Create a template from numerically measured criteria
         \n2. Fill out the survey, chosen a template
         \n3. View the result and chose candidate with highest rating
-        \n<b>Note 1:</b> Click on a template/note to view details
-        \n<b>Note 2:</b> On the first page you need to rate
+        \n\n
+        <b>Note 1:</b> Click on a template/note to view details\n
+        <b>Note 2:</b> On the first page you need to rate
         the importance of selection criteria relative to each other.
-        The following pages evaluate the alternatives relative to each other for each criterion.
+        The following pages evaluate the alternatives relative to each other for each criterion.\n
+        <b>Note 3:</b> Template with <b>one</b> criterion <b>doesn\'t compatibility</b> with <b>one</b> alternative.
 
     </string>
     <string name="how_to_use">How to use this app</string>
-    <string name="meaning_of_numbers">How to create survey/template</string>
+    <string name="meaning_of_numbers">Meaning of a numeric values</string>
     <string name="description_of_numbers">
         Each number shows how many times
         item in the beginning of the arrow
