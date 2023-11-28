@@ -2,18 +2,18 @@ package com.ethernet389.mai.ui.router
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Done
 import androidx.compose.material.icons.outlined.Engineering
 import androidx.compose.material.icons.outlined.HelpOutline
 import androidx.compose.material.icons.outlined.LibraryAdd
 import androidx.compose.material.icons.outlined.LibraryBooks
-import androidx.compose.material.icons.outlined.NavigateNext
 import androidx.compose.material.icons.outlined.NoteAdd
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.ethernet389.mai.R
 
-//Each name doesn't contains other name (Unique routes)
+//Each name doesn't contains other name (Unique routes) else app doesn't work correctly
 enum class MaiScreen(
     @StringRes val navigationTitle: Int,
     val navigationIcon: ImageVector,
@@ -26,8 +26,8 @@ enum class MaiScreen(
     Information(R.string.information, Icons.Outlined.HelpOutline),
     CreateNote(
         navigationTitle = R.string.create_note,
-        navigationIcon = Icons.Outlined.NavigateNext,
-        fabIcon = Icons.Outlined.NavigateNext,
+        navigationIcon = Icons.Outlined.Check,
+        fabIcon = Icons.Outlined.Check,
         isVisibleRoute = false
     ),
     Result(

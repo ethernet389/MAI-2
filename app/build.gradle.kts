@@ -56,6 +56,10 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":domain"))
     implementation(project(":mai"))
+
+    //Barcode (QR-Code)
+    implementation("com.simonsickle:composed-barcodes:1.1.1")
+
     //Jama
     implementation("gov.nist.math:jama:1.0.3")
 

@@ -101,6 +101,7 @@
         <item>Lesnikov Ivan Nikolaevich</item>
     </string-array>
 
+    <string name="share">Share</string>
     <string name="rating">Rating</string>
     <string name="_null">Null</string>
 </resources>
