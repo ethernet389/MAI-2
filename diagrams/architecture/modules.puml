@@ -1,0 +1,30 @@
+@startuml
+
+skinparam linetype ortho
+skinparam titleBorderRoundCorner 10
+skinparam titleBorderThickness 2
+skinparam titleBorderColor black
+skinparam titleFontSize 25
+
+title
+    Диаграмма зависимостей
+    модулей приложения
+end title
+
+rectangle domain<<Модуль бизнес-логики>>
+rectangle app<<Модуль визуализации>>
+rectangle data<<Модуль базы данных>>
+rectangle mai<<Модуль математики>>
+
+legend right
+    DI - Dependency Injection
+    DB - Database
+end legend
+
+app ---r-> data : DB\n+\nDI
+app ---l-> mai
+app ---d->domain : model\n+\nuse-cases\n+\nDI
+data ---u-> domain : repository\n+\nmodel\n+\nDI
+
+
+@enduml

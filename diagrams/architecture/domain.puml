@@ -2,6 +2,12 @@
 
 left to right direction
 skinparam linetype ortho
+skinparam titleBorderRoundCorner 10
+skinparam titleBorderThickness 2
+skinparam titleBorderColor black
+skinparam titleFontSize 25
+
+title Диаграмма классов модуля бизнес-логики
 
 /' Object '/
 package domain {
