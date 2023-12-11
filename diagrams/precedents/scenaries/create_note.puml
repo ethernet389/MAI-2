@@ -1,0 +1,26 @@
+@startuml
+
+skinparam linetype ortho
+
+(Открыть окно\nзаписей) as note_window
+rectangle "Сценарий: Создание записи" as create_note {
+    (Нажать на\n FAB) as fab_click
+    (Ввести название,\nальтернативы\nи\nвыбрать шаблон) as input_data
+    (Название\nуже\nсуществует) as name_exist_error
+    (Пустое название\nили\nпустые альтернативы) as empty_fields_error
+    (Добавить\nзапись в БД) as add_note_to_db
+}
+
+legend right
+    FAB - Floating Action Button
+    БД - База Данных
+end legend
+
+note_window -r-> fab_click
+fab_click --> input_data
+input_data <--> name_exist_error : Error
+input_data <--> empty_fields_error : Error
+input_data --> add_note_to_db
+add_note_to_db -l-> note_window
+
+@enduml

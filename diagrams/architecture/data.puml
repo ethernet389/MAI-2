@@ -1,0 +1,84 @@
+@startuml
+
+left to right direction
+skinparam linetype ortho
+
+package data {
+
+    rectangle model {
+        +class DataNote <<analog of Note>> {
+            +id : Long
+            +name : String
+            +candidates : List<String>
+            +report : String
+            ..
+            +Note.toDataNote() : DataNote
+            +BaseNote.toDataNote() : DataNote
+        }
+
+        +class DataTemplate <<analog of Template>> {
+            +id : Long
+            +name : String
+            +criteria : List<String>
+            ..
+            +Template.toDataTemplate() : DataTemplate
+            +BaseTemplate.toDataTemplate() : DataTemplate
+            +DataTemplate.toTemplate() : Template
+        }
+    }
+
+    rectangle repository {
+        +class RoomTemplateRepository <<implements TemplateRepository>> {
+            -templateDao : TemplateDao
+        }
+
+        +class RoomNoteRepository <<implements NoteRepository>> {
+            -noteDao : NoteDao
+            -templateDao : TemplateDao
+        }
+    }
+
+    rectangle dao {
+        +interface NoteDao {
+            +insertNote(DataNote) : Long
+            +getAllNotes() : List<DataNote>
+            +deleteNote(DataNote) : Int
+            +deleteAllNotes()
+        }
+
+        +interface TemplateDao {
+            +insertTemplate(DataTemplate) : Long
+            +insertTemplates(List<DataTemplate>) : List<Long>
+            +getAllTemplates() : List<DataTemplate>
+            +deleteTemplate(DataTemplate) : Int
+            +getTemplateById(Long) : (DataTemplate)
+            +deleteUnusedTemplates()
+        }
+    }
+
+    +abstract class AppDatabase <<RoomDatabase>> {
+        +getNoteDao() : NoteDao
+        +getTemplateDao() : TemplateDao
+        ==
+        {static} APP_DATABASE_NAME = "mai_db"
+    }
+
+    +class Converters {
+        +stringListToJson(List<String>) : String
+        +jsonToListString(String) : List<String>
+    }
+}
+
+/' Relation '/
+NoteDao -[hidden]u- TemplateDao
+DataNote -[hidden]u- DataTemplate
+RoomNoteRepository -[hidden]u- RoomTemplateRepository
+AppDatabase <..l Converters
+dao --ro AppDatabase
+RoomNoteRepository o--r NoteDao
+RoomNoteRepository o--r TemplateDao
+RoomTemplateRepository o-- TemplateDao
+DataNote --o NoteDao
+DataTemplate --o TemplateDao
+
+@enduml

@@ -31,7 +31,7 @@ class RoomTemplateRepository(
         }
     }
 
-    override suspend fun deleteUnusedTemplate() {
+    override suspend fun deleteUnusedTemplates() {
         return withContext(Dispatchers.IO) {
             templateDao.deleteUnusedTemplates()
         }

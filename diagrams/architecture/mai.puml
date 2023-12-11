@@ -1,0 +1,52 @@
+@startuml
+
+left to right direction
+skinparam linetype ortho
+
+/' Object '/
+package mai {
+    rectangle mai {
+        +class FinalWeights {
+            +relativeWeights : List<List<Double>>
+            +finalRelativeWeights : List<Double>
+            ==
+            +encodeToString() : String
+            {static} +decodeFromString(String) : FinalWeights
+        }
+
+        +class InputParameters {
+            +criteriaMatrix : KMatrix
+            +candidatesMatrices : List<KMatrix>
+            ==
+            +encodeToString() : String
+            {static} +decodeFromString(String) : InputParameters
+        }
+    }
+
+    rectangle matrix_extensions {
+        +class KMatrix {
+            +value : Matrix
+        }
+
+        +class MatrixSerializer <<KSerializer<Matrix>>> {
+            -delegatedSerializer :  KSerializer<Array<DoubleArray>>
+            +descriptor : SerialDescriptor
+            ==
+            +deserialize(Decoder) : Matrix
+            +serialize(Encoder, Matrix)
+        }
+
+        +class MaiCoefficients {
+            {static} +RI(KMatrix) : Double
+            {static} +CI(KMatrix) : Double
+            {static} +CR(KMatrix) : Double
+        }
+    }
+}
+
+/' Relation '/
+MatrixSerializer <..r KMatrix
+KMatrix --ro MaiCoefficients
+KMatrix --uo InputParameters
+
+@enduml

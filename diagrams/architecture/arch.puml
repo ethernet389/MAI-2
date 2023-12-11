@@ -1,0 +1,419 @@
+@startuml
+
+left to right direction
+
+skinparam linetype polyline
+skinparam linetype ortho
+
+skinparam ArrowThickness 2
+skinparam ClassAttributeIconSize 15
+skinparam ClassStereotypeFontSize 25
+skinparam ClassAttributeFontSize 30
+skinparam PackageFontSize 40
+skinparam RectangleFontSize 35
+
+/' Objects '/
+package domain {
+    rectangle use_case {
+        +class NotesCreator {
+            -noteRepository : NoteRepository
+            ==
+            +createNote(BaseNote) : Boolean
+        }
+
+        +class NotesDeleter {
+            -noteRepository : NoteRepository
+            ==
+            +deleteNote(Note) : Boolean
+            +deleteAllNotes()
+        }
+
+        +class NotesLoader {
+            -noteRepository : NoteRepository
+            ==
+            +getNotes() : List<Note>
+        }
+
+        +class TemplatesCreator {
+            -templateRepository : TemplateRepository
+            ==
+            +createTemplate(BaseTemplate) : Boolean
+        }
+
+        +class TemplatesDeleter {
+            -templateRepository : TemplateRepository
+            ==
+            +deleteTemplate(Template) : Boolean
+            +deleteUnusedTemplates()
+        }
+
+        +class TemplatesLoader {
+            -templateRepository : TemplateRepository
+            ==
+            +getTemplates() : List<Template>
+        }
+    }
+
+
+    rectangle model {
+        +class BaseNote <<parent>> {
+            +name : String
+            +template : Template
+            +alternatives : List<String>
+            +report : String
+        }
+
+        +class Note <<child>> {
+            +id : Long
+        }
+
+        +class Template <<child>> {
+            +id : Long
+        }
+
+        +class BaseTemplate <<parent>> {
+            +name : String
+            +criteria : List<String>
+        }
+    }
+
+
+    rectangle repository {
+        +interface NoteRepository {
+            +deleteNote(Note) : Boolean
+            +createNote(BaseNote) : Boolean
+            +getNotes() : List<Note>
+            +deleteAllNotes()
+        }
+
+        +interface TemplateRepository {
+            +deleteTemplate(Template) : Boolean
+            +createTemplate(BaseTemplate) : Boolean
+            +getTemplates() : List<Template>
+            +deleteUnusedTemplates()
+        }
+    }
+}
+
+package data {
+    rectangle dao {
+        +interface NoteDao {
+            +insertNote(DataNote) : Long
+            +getAllNotes() : List<DataNote>
+            +deleteNote(DataNote) : Int
+            +deleteAllNotes()
+        }
+
+        +interface TemplateDao {
+            +insertTemplate(DataTemplate) : Long
+            +insertTemplates(List<DataTemplate>) : List<Long>
+            +getAllTemplates() : List<DataTemplate>
+            +deleteTemplate(DataTemplate) : Int
+            +getTemplateById(Long) : (DataTemplate)
+            +deleteUnusedTemplates()
+        }
+    }
+
+    rectangle model {
+        +class DataNote {
+            +id : Long
+            +name : String
+            +candidates : List<String>
+            +report : String
+            ..
+            +Note.toDataNote() : DataNote
+            +BaseNote.toDataNote() : DataNote
+        }
+
+        +class DataTemplate {
+            +id : Long
+            +name : String
+            +criteria : List<String>
+            ..
+            +Template.toDataTemplate() : DataTemplate
+            +BaseTemplate.toDataTemplate() : DataTemplate
+            +DataTemplate.toTemplate() : Template
+        }
+    }
+
+    rectangle repository {
+        +class RoomTemplateRepository {
+            -templateDao : TemplateDao
+        }
+
+        +class RoomNoteRepository {
+            -noteDao : NoteDao
+            -templateDao : TemplateDao
+        }
+    }
+
+    +abstract class AppDatabase <<RoomDatabase>> {
+        +getNoteDao() : NoteDao
+        +getTemplateDao() : TemplateDao
+        ==
+        {static} APP_DATABASE_NAME = "mai_db"
+    }
+
+    +class Converters {
+        +stringListToJson(List<String>) : String
+        +jsonToListString(String) : List<String>
+    }
+}
+
+package app {
+    rectangle di {
+        +entity AppModule {
+        }
+        +entity DataModule {
+        }
+        +entity DomainModule {
+        }
+
+    }
+
+    rectangle ui {
+        rectangle components {
+            rectangle dialogs {
+                +entity CreationDialogs {
+                }
+
+                +entity DeletionDialogs {
+                }
+            }
+
+            +entity PreviewComponents {
+            }
+
+            +entity RelationComponents {
+            }
+
+            +entity ScaffoldComponents {
+            }
+        }
+
+        rectangle router {
+            +enum MaiScreens {
+                +Notes
+                +Templates
+                +Settings
+                +Information
+                +CreateNote
+                +Result
+            }
+        }
+
+        rectangle screens {
+            +entity CreateNoteScreen {
+            }
+
+            +entity InfoScreen {
+            }
+
+            +entity NotesScreen {
+            }
+
+            +entity ResultScreen {
+            }
+
+            +entity SettingsScreen {
+            }
+
+            +entity TemplatesScreen {
+            }
+        }
+
+        rectangle theme {
+            +entity Color {
+            }
+
+            +entity Shapes {
+            }
+
+            +entity Theme {
+            }
+
+            +entity Type {
+            }
+        }
+    }
+
+    rectangle util {
+        +entity LazyScrollbar {
+        }
+
+        +entity SupportHtmlTags {
+        }
+    }
+
+    rectangle view_model {
+        rectangle states {
+            +class CreationNoteState {
+                +noteName : String
+                +template : Template
+                +alternatives : List<String>
+                +relationMatrices : List<Matrix>
+            }
+
+            +class MaiNoteState {
+                +inputParameters : InputParameters
+                +finalWeights : FinalWeights
+                +crOfCriteriaMatrix : Double
+                +crsOfEachAlternativesMatrices : List<Double>
+            }
+
+            +class MaiUiState {
+                +templates : List<Template>
+                +notes : List<Note>
+            }
+        }
+
+        +class Controller<<Creator, Loader, Deleter>> {
+            +creator : Creator
+            +loader : Loader
+            +deleter : Deleter
+        }
+
+        +class MaiViewModel {
+            -noteController : Controller<NotesCreator, NotesLoader, NotesDeleter>
+            -templateController : Controller<TemplatesCreator, TemplatesLoader, TemplatesDeleter>
+            --
+            -_uiStateFlow : MutableStateFlow<MaiUiState>
+            + uiStateFlow : StateFlow<MaiUiState>
+            --
+            -_creationNoteState : MutableStateFlow<CreationNoteState>
+            +creationNoteState : StateFlow<CreationNoteState>
+            --
+            _maiResultNoteStateFlow : MutableStateFlow<MaiNoteState>
+            maiResultNoteStateFlow : StateFlow<MaiNoteState>
+            ==
+            +createTemplate(Template)
+            -updateTemplates()
+            -updateNotes()
+            -updateData()
+            +deleteNote(Note)
+            +deleteTemplate(Template)
+            +deleteAllNotes()
+            +deleteUnusedTemplates()
+            +clearAllData()
+            --
+            +postNoteFromCreationNoteState()
+            +createNewCreationNoteState(String, Template, List<String>)
+            +updateMatrixByIndex(Int, Int, Int, Double)
+            +swapValuesMatrix(Int, Int, Int)
+            +dropCreationNoteState()
+            --
+            +setNewCurrentMaiNoteState(Note)
+        }
+    }
+
+    +class App {
+        +onCreate()
+    }
+
+    +class MainActivity {
+    }
+}
+
+package mai {
+    rectangle mai {
+        +class FinalWeights {
+            +relativeWeights : List<List<Double>>
+            +finalRelativeWeights : List<Double>
+            ==
+            +encodeToString() : String
+            {static} +decodeFromString(String) : FinalWeights
+        }
+
+        +class InputParameters {
+            +criteriaMatrix : KMatrix
+            +candidatesMatrices : List<KMatrix>
+            ==
+            +encodeToString() : String
+            {static} +decodeFromString(String) : InputParameters
+        }
+    }
+
+    rectangle matrix_extensions {
+        +class KMatrix {
+            +value : Matrix
+        }
+
+        +class MatrixSerializer <<KSerializer<Matrix>>> {
+            -delegatedSerializer :  KSerializer<Array<DoubleArray>>
+            +descriptor : SerialDescriptor
+            ==
+            +deserialize(Decoder) : Matrix
+            +serialize(Encoder, Matrix)
+        }
+
+        +class MaiCoefficients {
+            {static} +RI(KMatrix) : Double
+            {static} +CI(KMatrix) : Double
+            {static} +CR(KMatrix) : Double
+        }
+    }
+}
+
+/' Relations '/
+BaseTemplate <|-- Template
+BaseNote <|-- Note
+
+NoteRepository o-- Note
+NoteRepository o-- BaseNote
+TemplateRepository o-- Template
+TemplateRepository o-- BaseTemplate
+
+TemplatesCreator o-- BaseTemplate
+TemplatesDeleter o-- Template
+TemplatesLoader o-- Template
+
+NotesCreator o-- BaseNote
+NotesDeleter o-- Note
+NotesLoader o-- Note
+
+
+RoomNoteRepository o-- NoteDao
+RoomNoteRepository o-- TemplateDao
+RoomTemplateRepository o-- TemplateDao
+RoomNoteRepository --|> NoteRepository
+RoomTemplateRepository --|> TemplateRepository
+
+DataNote --o NoteDao
+DataTemplate --o TemplateDao
+
+Converters --o AppDatabase
+NoteDao --o AppDatabase
+TemplateDao --o AppDatabase
+
+DataTemplate .. Template
+DataNote .. Note
+
+
+DataModule o-- AppDatabase
+DataModule o-- RoomTemplateRepository
+DataModule o-- RoomNoteRepository
+DomainModule <.. domain
+DataModule --o App
+DomainModule --o App
+AppModule --o App
+screens --o MainActivity
+Controller --o MaiViewModel
+di ..> MainActivity
+App ..> MainActivity
+theme --o components
+theme --o screens
+theme --o util
+components --o screens
+router --o MainActivity
+MaiViewModel --o MainActivity
+MaiUiState --o MaiViewModel
+MaiNoteState --o MaiViewModel
+CreationNoteState --o MaiViewModel
+
+
+KMatrix --> MatrixSerializer
+KMatrix --o InputParameters
+KMatrix --o MaiCoefficients
+MaiNoteState <.. MaiCoefficients
+
+@enduml

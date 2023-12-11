@@ -1,0 +1,172 @@
+@startuml
+
+left to right direction
+skinparam linetype ortho
+
+package app {
+rectangle ui {
+        rectangle components {
+            rectangle dialogs {
+                +entity CreationDialogs {
+                }
+
+                +entity DeletionDialogs {
+                }
+            }
+
+            +entity PreviewComponents {
+            }
+
+            +entity RelationComponents {
+            }
+
+            +entity ScaffoldComponents {
+            }
+        }
+
+        rectangle router {
+            +enum MaiScreens {
+                +Notes
+                +Templates
+                +Settings
+                +Information
+                +CreateNote
+                +Result
+            }
+        }
+
+        rectangle screens {
+            +entity CreateNoteScreen {
+            }
+
+            +entity InfoScreen {
+            }
+
+            +entity NotesScreen {
+            }
+
+            +entity ResultScreen {
+            }
+
+            +entity SettingsScreen {
+            }
+
+            +entity TemplatesScreen {
+            }
+        }
+
+        rectangle theme {
+            +entity Color {
+            }
+
+            +entity Shapes {
+            }
+
+            +entity Theme {
+            }
+
+            +entity Type {
+            }
+        }
+    }
+
+    rectangle di {
+        +entity AppModule {
+        }
+        +entity DataModule {
+        }
+        +entity DomainModule {
+        }
+
+    }
+
+    rectangle util {
+        +entity LazyScrollbar {
+        }
+
+        +entity SupportHtmlTags {
+        }
+    }
+
+    rectangle view_model {
+        rectangle states {
+            +class CreationNoteState {
+                +noteName : String
+                +template : Template
+                +alternatives : List<String>
+                +relationMatrices : List<Matrix>
+            }
+
+            +class MaiNoteState {
+                +inputParameters : InputParameters
+                +finalWeights : FinalWeights
+                +crOfCriteriaMatrix : Double
+                +crsOfEachAlternativesMatrices : List<Double>
+            }
+
+            +class MaiUiState {
+                +templates : List<Template>
+                +notes : List<Note>
+            }
+        }
+
+        +class Controller<<Creator, Loader, Deleter>> {
+            +creator : Creator
+            +loader : Loader
+            +deleter : Deleter
+        }
+
+        +class MaiViewModel {
+            -noteController : Controller<NotesCreator, NotesLoader, NotesDeleter>
+            -templateController : Controller<TemplatesCreator, TemplatesLoader, TemplatesDeleter>
+            --
+            -_uiStateFlow : MutableStateFlow<MaiUiState>
+            + uiStateFlow : StateFlow<MaiUiState>
+            --
+            -_creationNoteState : MutableStateFlow<CreationNoteState>
+            +creationNoteState : StateFlow<CreationNoteState>
+            --
+            _maiResultNoteStateFlow : MutableStateFlow<MaiNoteState>
+            maiResultNoteStateFlow : StateFlow<MaiNoteState>
+            ==
+            +createTemplate(Template)
+            -updateTemplates()
+            -updateNotes()
+            -updateData()
+            +deleteNote(Note)
+            +deleteTemplate(Template)
+            +deleteAllNotes()
+            +deleteUnusedTemplates()
+            +clearAllData()
+            --
+            +postNoteFromCreationNoteState()
+            +createNewCreationNoteState(String, Template, List<String>)
+            +updateMatrixByIndex(Int, Int, Int, Double)
+            +swapValuesMatrix(Int, Int, Int)
+            +dropCreationNoteState()
+            --
+            +setNewCurrentMaiNoteState(Note)
+        }
+    }
+
+    +class App {
+        +onCreate()
+    }
+
+    +class MainActivity {
+    }
+}
+
+theme <..r screens
+theme <..u components
+App <.. MainActivity
+App ..r> di
+util <.. ui
+di <.. MainActivity
+di <.. MaiViewModel
+ui <.. MainActivity
+Controller --uo MaiViewModel
+states --lo MaiViewModel
+MaiScreens <..l MainActivity
+
+@enduml

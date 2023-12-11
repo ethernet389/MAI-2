@@ -1,0 +1,12 @@
+@startuml
+
+(Открыть окно\nинформации) as info_window
+rectangle "Сценарий: Просмотр литературы" {
+    (Нажать\nна литературу) as click_on_literature
+    (Открыть ссылку\nв браузере) as open_browser
+}
+
+info_window -r-> click_on_literature
+click_on_literature --> open_browser
+
+@enduml

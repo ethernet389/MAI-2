@@ -1,0 +1,27 @@
+@startuml
+
+skinparam linetype ortho
+
+(Открыть окно\nшаблонов) as template_window
+
+rectangle "Сценарий:\nСоздание шаблона" {
+    (Нажать на\n FAB) as fab_click
+    (Ввести\nназвание\nи критерии) as input_data
+    (Название\nуже\nсуществует) as name_exist_error
+    (Пустое название\nили\nпустые критерии) as empty_fields_error
+    (Добавить\nшаблон в БД) as add_template_to_db
+}
+
+legend right
+    FAB - Floating Action Button
+    БД - База Данных
+end legend
+
+template_window -r-> fab_click
+fab_click -d-> input_data
+input_data <---> name_exist_error : Error
+input_data <--> empty_fields_error : Error
+input_data --> add_template_to_db
+add_template_to_db -u-> template_window
+
+@enduml

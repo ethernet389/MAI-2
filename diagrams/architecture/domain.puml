@@ -1,0 +1,128 @@
+@startuml
+
+left to right direction
+skinparam linetype ortho
+
+/' Object '/
+package domain {
+    rectangle use_case {
+        rectangle "Use Cases for Notes" #line.dashed {
+            +class NotesCreator {
+                -noteRepository : NoteRepository
+                ==
+                +createNote(BaseNote) : Boolean
+            }
+
+            +class NotesDeleter {
+                -noteRepository : NoteRepository
+                ==
+                +deleteNote(Note) : Boolean
+                +deleteAllNotes()
+            }
+
+            +class NotesLoader {
+                -noteRepository : NoteRepository
+                ==
+                +getNotes() : List<Note>
+            }
+        }
+
+
+        rectangle "Use Cases for Templates" #line.dashed {
+            +class TemplatesCreator {
+                -templateRepository : TemplateRepository
+                ==
+                +createTemplate(BaseTemplate) : Boolean
+            }
+
+            +class TemplatesDeleter {
+                -templateRepository : TemplateRepository
+                ==
+                +deleteTemplate(Template) : Boolean
+                +deleteUnusedTemplates()
+            }
+
+            +class TemplatesLoader {
+                -templateRepository : TemplateRepository
+                ==
+                +getTemplates() : List<Template>
+            }
+        }
+    }
+
+
+    rectangle model {
+        rectangle Notes #line.dashed {
+            +class BaseNote {
+                +name : String
+                +template : Template
+                +alternatives : List<String>
+                +report : String
+            }
+
+            +class Note {
+                +id : Long
+            }
+        }
+
+
+        rectangle Templates #line.dashed {
+            +class Template {
+                +id : Long
+            }
+
+            +class BaseTemplate {
+                +name : String
+                +criteria : List<String>
+            }
+        }
+    }
+
+
+    rectangle repository {
+        +interface NoteRepository {
+            +deleteNote(Note) : Boolean
+            +createNote(BaseNote) : Boolean
+            +getNotes() : List<Note>
+            +deleteAllNotes()
+        }
+
+        +interface TemplateRepository {
+            +deleteTemplate(Template) : Boolean
+            +createTemplate(BaseTemplate) : Boolean
+            +getTemplates() : List<Template>
+            +deleteUnusedTemplates()
+        }
+    }
+}
+
+/' use_case position '/
+NotesLoader -[hidden]r- NotesDeleter
+NotesDeleter -[hidden]r- NotesCreator
+TemplatesLoader -[hidden]r- TemplatesDeleter
+TemplatesDeleter -[hidden]r- TemplatesCreator
+TemplatesDeleter -[hidden]u- NotesDeleter
+
+/' model position '/
+Note -[hidden]l- BaseNote
+Template -[hidden]r- BaseTemplate
+Template -[hidden]u- Note
+
+/' repository position '/
+NoteRepository -[hidden]d- TemplateRepository
+
+/' package position '/
+use_case -[hidden]r- model
+model -[hidden]r- repository
+
+/' Relations '/
+Note --|> BaseNote
+Template --|> BaseTemplate
+Templates --ro TemplateRepository
+Notes --ro NoteRepository
+
+NoteRepository --lo "Use Cases for Notes"
+TemplateRepository --lo "Use Cases for Templates"
+Notes --lo "Use Cases for Notes"
+
+@enduml

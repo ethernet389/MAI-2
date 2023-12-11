@@ -11,6 +11,6 @@ class TemplatesDeleter(
     }
 
     suspend fun deleteUnusedTemplates() {
-        return templateRepository.deleteUnusedTemplate()
+        return templateRepository.deleteUnusedTemplates()
     }
 }

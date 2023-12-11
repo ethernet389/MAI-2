@@ -1,0 +1,21 @@
+@startuml
+
+skinparam linetype ortho
+
+rectangle "Исходная точка:" as start_place {
+    (Открыть окно\nшаблонов) as template_window
+    (Открыть окно\nзаписей) as note_window
+}
+
+rectangle "Сценарий: Просмотр объекта" {
+    (Нажать\nна значок\nглаза) as click_on_eye
+    (Просмотерть\nинформацию\nоб объекте) as view_info
+    (Нажать\nна кнопку\n"Назад") as go_back
+}
+
+start_place -r-> click_on_eye
+click_on_eye --> view_info
+view_info --> go_back
+go_back -l-> start_place
+
+@enduml

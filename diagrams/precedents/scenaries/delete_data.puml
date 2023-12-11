@@ -1,0 +1,36 @@
+@startuml
+
+skinparam linetype ortho
+
+(Открыть окно\n настроек) as settings_window
+
+rectangle "Сценарий: Удаление данных" {
+    (Нажать \nна кнопку...) as click_on_delete_data
+    (Удалить\nвсе данные из БД) as clear_all_data
+    (Удалить\nвсе записи из БД) as delete_notes
+    (Удалить\nнеиспользуемые\n шаблоны из БД) as delete_unused_templates
+    (Запросить\nподтверждение) as need_confirm_to_delete_data
+    (Подтвердить) as confirm_delete_data
+    (Отмена) as cancel_delete_data
+    (Исполнить\nсоответсвующую\nкоманду) as delete_data
+}
+
+legend right
+    БД - База Данных
+end legend
+
+settings_window -d-> click_on_delete_data
+click_on_delete_data -d-> clear_all_data
+click_on_delete_data -d-> delete_notes
+click_on_delete_data -d-> delete_unused_templates
+clear_all_data -d-> need_confirm_to_delete_data
+delete_notes -d-> need_confirm_to_delete_data
+delete_unused_templates -d-> need_confirm_to_delete_data
+need_confirm_to_delete_data -d-> cancel_delete_data
+need_confirm_to_delete_data -d-> confirm_delete_data
+cancel_delete_data -u-> settings_window
+confirm_delete_data -u-> delete_data
+delete_data -u-> settings_window
+delete_data -[hidden]- need_confirm_to_delete_data
+
+@enduml

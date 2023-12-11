@@ -27,7 +27,7 @@ class MaiNoteState(note: Note) {
 
     val finalWeights: FinalWeights = MAI(inputParameters)
 
-    val crOfCriteriaMatrix: Double = MaiCoefficients.RI(inputParameters.criteriaMatrix)
+    val crOfCriteriaMatrix: Double = MaiCoefficients.CR(inputParameters.criteriaMatrix)
     val crsOfEachAlternativesMatrices: List<Double> = inputParameters
         .candidatesMatrices
         .map { matrix -> MaiCoefficients.CR(matrix) }

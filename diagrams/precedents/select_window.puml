@@ -1,0 +1,43 @@
+@startuml
+
+skinparam linetype ortho
+
+actor Пользователь as user
+/' Windows '/
+(Открыть окно\nшаблонов) as template_window
+(Открыть окно\nзаписей) as note_window
+(Открыть окно\nинформации) as info_window
+(Открыть окно\nнастроек) as settings_window
+
+( ) as empty_knot
+
+rectangle "Сценарий:\nУдаление объекта" as delete_object1
+rectangle "Сценарий:\nУдаление объекта" as delete_object2
+rectangle "Сценарий:\nПросмотр объекта" as view_object1
+rectangle "Сценарий:\nПросмотр объекта" as view_object2
+
+rectangle "Сценарий:\nСоздание записи" as create_note
+rectangle "Сценарий:\nСоздание шаблона" as create_template
+rectangle "Сценарий:\nУдаление данных" as delete_data
+rectangle "Сценарий:\nПросмотр литературы" as view_literature
+
+user -- empty_knot: Запуск\nприложения
+
+empty_knot <--d-> template_window
+empty_knot <-d-> note_window
+empty_knot <-r-> info_window
+empty_knot <-l-> settings_window
+
+note_window <-d-> create_note
+note_window <-d-> delete_object1
+note_window <-d-> view_object1
+
+template_window <-d-> delete_object2
+template_window <-d-> view_object2
+template_window <-d-> create_template
+
+info_window <-r-> view_literature
+
+settings_window <-l-> delete_data
+
+@enduml

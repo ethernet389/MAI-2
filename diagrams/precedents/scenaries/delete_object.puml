@@ -1,0 +1,32 @@
+@startuml
+
+skinparam linetype ortho
+
+rectangle "Исходная точка:" as start_place {
+    (Открыть окно\nшаблонов) as template_window
+    (Открыть окно\nзаписей) as note_window
+}
+
+rectangle "Сценарий: Удаление объекта" {
+    (Нажать\nна значок\nурны) as click_on_bin
+    (Запросить\nподтверждение) as need_confirm
+    (Подтвердить) as confirm
+    (Отмена) as cancel
+    (Удалить\nобъект из БД) as delete_object
+}
+
+legend right
+    БД - База Данных
+end legend
+
+template_window -[hidden]r- note_window
+start_place -u-> click_on_bin
+click_on_bin --> need_confirm
+confirm -[hidden]u- cancel
+need_confirm -r-> confirm
+need_confirm -r-> cancel
+confirm -r-> delete_object
+cancel -r-> start_place
+delete_object -u-> start_place
+
+@enduml
