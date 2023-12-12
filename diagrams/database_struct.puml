@@ -1,0 +1,69 @@
+@startuml
+
+left to right direction
+allowmixing
+
+left to right direction
+skinparam linetype ortho
+skinparam titleBorderRoundCorner 10
+skinparam titleBorderThickness 2
+skinparam titleBorderColor black
+skinparam titleFontSize 25
+
+skinparam PackageBackgroundColor #EAFAF1
+skinparam RectangleBackgroundColor #FDEBD0
+skinparam ClassBackgroundColor #F9E79F
+
+title Структура базы данных
+
+legend right
+    (<u>UNIQUE</u>) <b>индекс</b> : таблица(<b>поле таблицы</b>) <=>
+    <=> CREATE (UNIQUE) INDEX IF NOT EXISTS <b>индекс</b> ON таблица(<b>поле таблицы</b>)
+end legend
+database "База Данных" {
+    rectangle Таблицы as tables {
+        entity templates {
+            <b>criteria</b> : TEXT NOT NULL
+            ..
+            <b>_name</b> : TEXT NOT NULL
+            ..
+            <b>_id</b> : INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
+        }
+
+        entity notes {
+            	<b>candidates</b> : TEXT NOT NULL
+            	..
+            	<b>template_id</b> : INTEGER NOT NULL
+            	..
+            	<b>report</b> : TEXT NOT NULL
+            	..
+            	<b>_name</b> : TEXT NOT NULL
+            	..
+            	<b>_id</b> : INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT
+            	--
+            	FOREIGN KEY (<b>template_id</b>) REFERENCES templates(<b>_id</b>) ON DELETE CASCADE
+        }
+    }
+
+    rectangle Индексы as indeces {
+        rectangle templates as i_templates #F5B7B1;line.dashed {
+            rectangle "<u>UNIQUE</u> <b>template_id_index</b> : templates(<b>_id</b>)" as template_id_index #F9E79F
+            rectangle "<u>UNIQUE</u> <b>template_name_index</b> : templates(<b>_name</b>)" as template_name_index #F9E79F
+        }
+
+        rectangle notes as i_notes #F5B7B1;line.dashed {
+            rectangle "<u>UNIQUE</u> <b>note_id_index</b> : notes(<b>_id</b>)" as note_id_index #F9E79F
+            rectangle "<u>UNIQUE</u> <b>note_name_index</b> : notes(<b>_name</b>)" as note_name_index #F9E79F
+            rectangle "<b>note_template_id_index</b> : notes(<b>template_id</b>)" as note_template_id_index #F9E79F
+        }
+    }
+}
+
+notes .l.> templates
+indeces -[hidden]r- tables
+template_id_index -[hidden]r- template_name_index
+template_name_index -[hidden]r- template_name_index
+note_id_index -[hidden]r- note_name_index
+note_name_index -[hidden]r- note_template_id_index
+
+@enduml

@@ -2,6 +2,8 @@
 
 skinparam linetype ortho
 
+skinparam RectangleBackgroundColor #FDEBD0
+
 (Открыть окно\n настроек) as settings_window
 
 rectangle "Сценарий: Удаление данных" {

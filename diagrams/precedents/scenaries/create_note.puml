@@ -2,6 +2,8 @@
 
 skinparam linetype ortho
 
+skinparam RectangleBackgroundColor #FDEBD0
+
 (Открыть окно\nзаписей) as note_window
 rectangle "Сценарий: Создание записи" as create_note {
     (Нажать на\n FAB) as fab_click

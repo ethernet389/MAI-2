@@ -2,6 +2,8 @@
 
 skinparam linetype ortho
 
+skinparam RectangleBackgroundColor #FDEBD0
+
 (Открыть окно\nшаблонов) as template_window
 
 rectangle "Сценарий:\nСоздание шаблона" {
