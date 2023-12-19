@@ -58,7 +58,6 @@ dependencies {
     implementation(project(":mai"))
 
     //Barcode (QR-Code)
-    implementation("com.simonsickle:composed-barcodes:1.1.1")
     implementation("com.github.alexzhirkevich:custom-qr-generator:1.6.2")
 
     //Draw drawable with Image
