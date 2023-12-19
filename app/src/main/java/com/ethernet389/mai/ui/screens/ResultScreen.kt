@@ -1,6 +1,8 @@
 package com.ethernet389.mai.ui.screens
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -11,7 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -30,6 +32,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -43,8 +47,24 @@ import com.ethernet389.domain.model.note.Note
 import com.ethernet389.mai.R
 import com.ethernet389.mai.mai.FinalWeights
 import com.ethernet389.mai.matrix_extensions.MaiCoefficients
-import com.simonsickle.compose.barcodes.Barcode
-import com.simonsickle.compose.barcodes.BarcodeType
+import com.github.alexzhirkevich.customqrgenerator.QrData
+import com.github.alexzhirkevich.customqrgenerator.vector.QrCodeDrawable
+import com.github.alexzhirkevich.customqrgenerator.vector.createQrVectorOptions
+import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorColor
+import com.google.accompanist.drawablepainter.rememberDrawablePainter
+
+private fun createQrCode(text: String): Drawable {
+    val options = createQrVectorOptions {
+
+        padding = .05f
+
+        background {
+            color = QrVectorColor.Solid(Color.White.toArgb())
+        }
+    }
+    val data = QrData.Text(text)
+    return QrCodeDrawable(data = data, options = options, charset = Charsets.UTF_8)
+}
 
 @Composable
 fun ResultScreen(
@@ -63,14 +83,20 @@ fun ResultScreen(
         .sortedByDescending { it.second }
         .mapIndexed { i, pair -> "${i + 1}. ${pair.first} (${pair.second.toFloat()})" }
         .reduce { acc, s -> "$acc\n$s" }
-    var shareBody = stringResource(R.string.rating) + "\n" +
-            ratingBody + "\n\n" +
-            stringResource(R.string.coherence_of_criteria) + "\n" +
-            isConsistent(d = crOfCriteriaMatrix).first + "\n\n" +
-            stringResource(R.string.coherence_of_alternatives_by_criterion) + "\n"
+    var shareBody = stringResource(R.string.rating) +
+            "\n" +
+            ratingBody +
+            "\n\n" +
+            "${stringResource(R.string.coherence_of_criteria)}: ${isConsistent(d = crOfCriteriaMatrix).first}" +
+            "\n\n" +
+            stringResource(R.string.coherence_of_alternatives_by_criterion) +
+            "\n" +
+            "=====" +
+            "\n"
     note.template.criteria.forEachIndexed { i, s ->
         shareBody += "$s: ${isConsistent(crsOfEachAlternativesMatrices[i]).first}\n"
     }
+    val qrCodeDrawable = createQrCode(shareBody)
 
     LazyColumn(
         modifier = modifier.fillMaxSize()
@@ -179,11 +205,13 @@ fun ResultScreen(
                         }
                     }
 
-                    Barcode(
-                        modifier = Modifier.size(250.dp),
-                        type = BarcodeType.QR_CODE,
-                        showProgress = true,
-                        value = shareBody
+                    Image(
+                        painter = rememberDrawablePainter(drawable = qrCodeDrawable),
+                        contentDescription = null,
+                        modifier = Modifier.sizeIn(
+                            minWidth = 200.dp, minHeight = 200.dp,
+                            maxWidth = 300.dp, maxHeight = 300.dp
+                        )
                     )
                 }
             )
