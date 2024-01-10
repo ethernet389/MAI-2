@@ -67,6 +67,19 @@ private fun createQrCode(text: String): Drawable {
 }
 
 @Composable
+fun QrCodeShareImage(
+    shareBody: String,
+    modifier: Modifier = Modifier
+) {
+    val qrCodeDrawable = createQrCode(shareBody)
+    Image(
+        painter = rememberDrawablePainter(drawable = qrCodeDrawable),
+        contentDescription = null,
+        modifier = modifier
+    )
+}
+
+@Composable
 fun ResultScreen(
     note: Note,
     finalWeights: FinalWeights,
@@ -96,7 +109,6 @@ fun ResultScreen(
     note.template.criteria.forEachIndexed { i, s ->
         shareBody += "$s: ${isConsistent(crsOfEachAlternativesMatrices[i]).first}\n"
     }
-    val qrCodeDrawable = createQrCode(shareBody)
 
     LazyColumn(
         modifier = modifier.fillMaxSize()
@@ -151,7 +163,10 @@ fun ResultScreen(
                                         .fillMaxHeight()
                                         .width(thicknessOfDivider)
                                 )
-                                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                                Box(
+                                    modifier = Modifier.weight(1f),
+                                    contentAlignment = Alignment.Center
+                                ) {
                                     CrStatus(cr = crsOfEachAlternativesMatrices[i])
                                 }
                             }
@@ -205,13 +220,14 @@ fun ResultScreen(
                         }
                     }
 
-                    Image(
-                        painter = rememberDrawablePainter(drawable = qrCodeDrawable),
-                        contentDescription = null,
-                        modifier = Modifier.sizeIn(
-                            minWidth = 200.dp, minHeight = 200.dp,
-                            maxWidth = 300.dp, maxHeight = 300.dp
-                        )
+                    QrCodeShareImage(
+                        shareBody = shareBody,
+                        modifier = Modifier
+                            .padding(dimensionResource(R.dimen.small_padding))
+                            .sizeIn(
+                                minWidth = 100.dp, minHeight = 100.dp,
+                                maxWidth = 220.dp, maxHeight = 220.dp
+                            )
                     )
                 }
             )
@@ -225,7 +241,7 @@ private fun CrStatus(
     modifier: Modifier = Modifier
 ) {
     val (text, isCoherent) = isConsistent(cr)
-    val (color, icon) = when(isCoherent) {
+    val (color, icon) = when (isCoherent) {
         true -> colorResource(R.color.is_not_inverse_color) to Icons.Filled.Check
         false -> colorResource(R.color.is_inverse_color) to Icons.Filled.Close
     }
