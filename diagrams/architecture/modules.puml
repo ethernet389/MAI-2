@@ -10,10 +10,7 @@ skinparam PackageBackgroundColor #EAFAF1
 skinparam RectangleBackgroundColor #FDEBD0
 skinparam ClassBackgroundColor #F9E79F
 
-title
-    Диаграмма зависимостей
-    модулей приложения
-end title
+
 
 rectangle domain<<Модуль бизнес-логики>>
 rectangle app<<Модуль визуализации>>
