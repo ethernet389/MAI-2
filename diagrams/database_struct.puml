@@ -14,7 +14,6 @@ skinparam PackageBackgroundColor #EAFAF1
 skinparam RectangleBackgroundColor #FDEBD0
 skinparam ClassBackgroundColor #F9E79F
 
-title Структура базы данных
 
 legend right
     (<u>UNIQUE</u>) <b>индекс</b> : таблица(<b>поле таблицы</b>) <=>

@@ -5,15 +5,10 @@ skinparam linetype ortho
 skinparam titleBorderRoundCorner 10
 skinparam titleBorderThickness 2
 skinparam titleBorderColor black
-skinparam titleFontSize 25
 
 skinparam PackageBackgroundColor #EAFAF1
 skinparam RectangleBackgroundColor #FDEBD0
 skinparam ClassBackgroundColor #F9E79F
-
-title
-    Диаграмма классов модуля визуализации
-end title
 
 package app {
 rectangle ui {
